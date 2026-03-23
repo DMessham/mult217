@@ -36,7 +36,7 @@
 
         // Special function `setup()` called ONCE before rendering phase
         function setup() {
-            // Create a new 400x400 canvas element to do our sketching in
+            // Create a new canvas element to do our sketching in
             let canvas = createCanvas(viewWidth, viewHeight);
 
             // palletWidth = viewWidth/(colorArray.length)
@@ -44,6 +44,8 @@
             // palletWidth == viewWidth/16
             // Optional, but without a 'parent' set, the canvas is added to the end of <main> by default
             canvas.parent('sketch-container');
+            fill(colorArray[0]);
+            rect(0,0,viewWidth, viewHeight)
         }
 
         // Special function `draw()` called repeatedly during the rendering phase
@@ -78,8 +80,8 @@
             else{
                 fill(colorArray[15])
             }
-            for(let i= colorArray.length*palletWidth+(palletWidth); i<colorArray.length*palletWidth*2; i+=palletWidth){
-                circle(i+(palletHeight/2),palletHeight/2, ((i/(colorArray.length*palletWidth))*palletHeight)-palletHeight)
+            for(let i= colorArray.length*palletWidth+(palletWidth); i<colorArray.length*palletWidth*2; i+=palletWidth*0.75){
+                circle(i+(palletWidth/2),palletHeight/2, (((i)/(colorArray.length*palletWidth))*palletHeight)-palletHeight)
             }
             
             fill(colorArray[currentColorIndex]);
