@@ -5,13 +5,13 @@
     <title>DMessham Circle</title>
     <script>
         // Your Processing.js code goes here
-        let viewHeight = 480
-        let viewWidth = 640
+        let viewHeight = 220
+        let viewWidth = 320
         let currentColorIndex=0
-        let palletWidth = 20 //default
-        let palletHeight = 24
-        let strokeMin = 1.5
-        let strokeVal=1
+        let palletWidth = 12 //default
+        let palletHeight = 20
+        let strokeMin = 1.25
+        let strokeVal=3
 
         colorArray = [ //based off the 4-bit cga color palette, 1 bit per rgb channel, with extra intensity bit
             [0,0,0], // black
@@ -68,7 +68,7 @@
 
             
             fill(colorArray[currentColorIndex]);
-            rect(viewWidth-(palletWidth*16)+2,2,palletWidth*16-2,palletHeight-4)
+            rect((palletWidth*16)+2,2,palletWidth*16-2,palletHeight-4)
             
             //stroke preview
             if(currentColorIndex>=10){ //for making the stroke contrast against the bg
@@ -78,7 +78,7 @@
                 fill(colorArray[15])
             }
             for(let i= colorArray.length*palletWidth+(palletWidth); i<colorArray.length*palletWidth*2; i+=palletWidth*2){
-                circle(i+(palletWidth/2),palletHeight/2, ((i-colorArray.length*palletWidth)/(palletWidth/strokeMin)) )
+                circle(i+(palletWidth/2),palletHeight/2, (((i-colorArray.length)/palletWidth-palletWidth)) )
             }
             
             fill(colorArray[currentColorIndex]);
