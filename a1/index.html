@@ -13,7 +13,9 @@
         let strokeMin = 1.25
         let strokeVal=3
 
-        colorArray = [ //based off the 4-bit cga color palette, 1 bit per rgb channel, with extra intensity bit
+        // info from https://en.wikipedia.org/wiki/Enhanced_Graphics_Adapter
+
+        colorArray = [ //based off the 4-bit cga color palette, 1 bit per rgb channel, with extra intensity bit, making the full 64 color palete is a no
             [0,0,0], // black
             [0,0,170.6], //blue
             [0,170.6,0], //green
@@ -55,9 +57,6 @@
             
             
             // draw colorpicker
-            let xIndexRaw = mouseX/palletWidth
-            
-            let xIndexCalc = Math.floor(xIndexRaw)
             
             for(let i = 0; i<colorArray.length;i++ ){
                 fill(colorArray[i])
@@ -77,7 +76,7 @@
             else{
                 fill(colorArray[15])
             }
-            for(let i= colorArray.length*palletWidth+(palletWidth); i<colorArray.length*palletWidth*2; i+=palletWidth*1){
+            for(let i= colorArray.length*palletWidth+(palletWidth); i<colorArray.length*palletWidth*2; i+=palletWidth){
                 circle(i+(palletHeight/2),palletHeight/2, (((i-colorArray.length)/palletWidth-palletHeight)) )
             }
             
@@ -90,6 +89,14 @@
                     fill(colorArray[currentColorIndex]);
                     circle(mouseX, mouseY, strokeVal);
                 } else {
+
+                            
+                    let xIndexRaw = mouseX/palletWidth
+                    let xIndexRawAlt = mouseX/(palletHeight/2)
+                    
+                    let xIndexCalc = Math.floor(xIndexRaw)
+                    
+                    let xIndexCalcAlt = Math.floor(xIndexRaw) - (colorArray.length)
                     // console.log('pallet picker raw index', xIndexRaw)
                     
                     console.log('picker calcindex', xIndexCalc)
@@ -97,9 +104,9 @@
                         currentColorIndex = xIndexCalc
                     } else if(xIndexCalc<colorArray.length*2){
                         // set stroke
-                        let strokeXindex = xIndexRaw - (colorArray.length)
-                        console.log('stroke picker calcindex', strokeMin*strokeXindex)
-                        strokeVal = strokeMin*strokeXindex
+                        let strokeXindex = xIndexCalcAlt
+                        console.log('stroke picker calcindex', strokeXindex/palletHeight)
+                        strokeVal = strokeXindex
                     }
                 }
             }
