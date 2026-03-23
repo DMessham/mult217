@@ -5,11 +5,11 @@
     <title>DMessham Circle</title>
     <script>
         // Your Processing.js code goes here
-        let viewHeight = 220
-        let viewWidth = 320
+        let viewHeight = 366
+        let viewWidth = 640
         let currentColorIndex=0
-        let palletWidth = 12 //default
-        let palletHeight = 20
+        let palletWidth = 20 //default
+        let palletHeight = 16
         let strokeMin = 1.25
         let strokeVal=3
 
@@ -77,8 +77,8 @@
             else{
                 fill(colorArray[15])
             }
-            for(let i= colorArray.length*palletWidth+(palletWidth); i<colorArray.length*palletWidth*2; i+=palletWidth*2){
-                circle(i+(palletWidth/2),palletHeight/2, (((i-colorArray.length)/palletWidth-palletWidth)) )
+            for(let i= colorArray.length*palletWidth+(palletWidth); i<colorArray.length*palletWidth*2; i+=palletWidth*1){
+                circle(i+(palletHeight/2),palletHeight/2, (((i-colorArray.length)/palletWidth-palletHeight)) )
             }
             
             fill(colorArray[currentColorIndex]);
