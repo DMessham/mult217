@@ -48,6 +48,7 @@
 
         // Special function `draw()` called repeatedly during the rendering phase
         function draw() {
+            strokeWeight(2)
 
             //fill in panel BG
             
@@ -67,8 +68,9 @@
 
             
             fill(colorArray[currentColorIndex]);
-            rect((palletWidth*16)+2,2,palletWidth*16-2,palletHeight-4)
+            rect((palletWidth*16)+1,1,palletWidth*16-1,palletHeight-2)
             
+            strokeWeight(0)
             //stroke preview
             if(currentColorIndex>=10){ //for making the stroke contrast against the bg
                 fill(colorArray[0])
@@ -83,7 +85,6 @@
             fill(colorArray[currentColorIndex]);
 
             // when mouse button is pressed, draw circle, or calculate new stroke/color
-            strokeWeight(0.125)
             if (mouseIsPressed === true) {
                 if(mouseY > palletHeight){
                     fill(colorArray[currentColorIndex]);
