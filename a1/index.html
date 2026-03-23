@@ -10,6 +10,8 @@
         let currentColorIndex=0
         let palletWidth = 16 //default
         let palletHeight = 16
+        let strokeMin = 2
+        let strokeVal=1
 
         colorArray = [ //based off the 4-bit cga color palette, 1 bit per rgb channel, with extra intensity bit
             [0,0,0], // black
@@ -35,8 +37,8 @@
             // Create a new 400x400 canvas element to do our sketching in
             let canvas = createCanvas(viewWidth, viewHeight);
 
-            palletWidth = viewWidth/(colorArray.length)
-            console.log("Calc colorpick item width", viewWidth/(colorArray.length)*2)
+            // palletWidth = viewWidth/(colorArray.length)
+            console.log("Calc colorpick item width", viewWidth/(colorArray.length))
             // palletWidth == viewWidth/16
             // Optional, but without a 'parent' set, the canvas is added to the end of <main> by default
             canvas.parent('sketch-container');
@@ -44,7 +46,6 @@
 
         // Special function `draw()` called repeatedly during the rendering phase
         function draw() {
-            // TODO: add color pallete preview
             for(let i = 0; i<colorArray.length;i++ ){
                 fill(colorArray[i])
                 // square(i*palleteWidth,0,palleteWidth)
@@ -55,25 +56,32 @@
             fill(colorArray[currentColorIndex]);
             // TODO: add color picker
 
+            
+            // TODO: add color pallete preview
 
-            // when mouse button is pressed, draw circle
+
+            // when mouse button is pressed, draw circle, or calculate new stroke/color
             strokeWeight(0.125)
             if (mouseIsPressed === true) {
                 if(mouseY > palletHeight){
                     fill(colorArray[currentColorIndex]);
-                    circle(mouseX, mouseY, 16
+                    circle(mouseX, mouseY, strokeVal
                     );
                 } else {
                     let xIndexRaw = mouseX/palletWidth
                     // console.log('pallet picker raw index', xIndexRaw)
                     let xIndexCalc = Math.floor(xIndexRaw)
                     
-                    console.log('pallet picker calcindex', xIndexCalc)
+                    console.log('picker calcindex', xIndexCalc)
                     if (xIndexCalc<colorArray.length){
                         currentColorIndex = xIndexCalc
+                    } else if(xIndexCalc<colorArray.length*2){
+                        // set stroke
+                        let strokeXindex = xIndexRaw - (colorArray.length)
+                        console.log('stroke picker calcindex', strokeMin*strokeXindex)
+                        strokeVal = strokeMin*strokeXindex
                     }
                 }
-            } else {
             }
         }
     </script>
