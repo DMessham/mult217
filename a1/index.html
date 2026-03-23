@@ -8,9 +8,9 @@
         let viewHeight = 480
         let viewWidth = 640
         let currentColorIndex=0
-        let palletWidth = 16 //default
-        let palletHeight = 16
-        let strokeMin = 2
+        let palletWidth = 18 //default
+        let palletHeight = 24
+        let strokeMin = 1.5
         let strokeVal=1
 
         colorArray = [ //based off the 4-bit cga color palette, 1 bit per rgb channel, with extra intensity bit
@@ -46,16 +46,32 @@
 
         // Special function `draw()` called repeatedly during the rendering phase
         function draw() {
+
+            //fill in panel BG
+            
+            fill(colorArray[8]);
+            rect(0,0,viewWidth, palletHeight)
+            
+            let xIndexRaw = mouseX/palletWidth
+            
+            let xIndexCalc = Math.floor(xIndexRaw)
+
             for(let i = 0; i<colorArray.length;i++ ){
                 fill(colorArray[i])
                 // square(i*palleteWidth,0,palleteWidth)
                 let xOffset = i*palletWidth
                 rect(xOffset,0,palletWidth,palletHeight)
             }
+
             
             fill(colorArray[currentColorIndex]);
-            // TODO: add color picker
-
+            
+            
+            //stroke preview
+            for(let i= colorArray.length*palletWidth+(palletWidth); i<colorArray.length*palletWidth*2; i+=palletWidth*2){
+                circle(i+(palletWidth/2),palletHeight/2, ((i-colorArray.length*palletWidth)/(palletWidth/strokeMin)) )
+            }
+            
             
             // TODO: add color pallete preview
 
@@ -65,12 +81,9 @@
             if (mouseIsPressed === true) {
                 if(mouseY > palletHeight){
                     fill(colorArray[currentColorIndex]);
-                    circle(mouseX, mouseY, strokeVal
-                    );
+                    circle(mouseX, mouseY, strokeVal);
                 } else {
-                    let xIndexRaw = mouseX/palletWidth
                     // console.log('pallet picker raw index', xIndexRaw)
-                    let xIndexCalc = Math.floor(xIndexRaw)
                     
                     console.log('picker calcindex', xIndexCalc)
                     if (xIndexCalc<colorArray.length){
