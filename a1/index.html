@@ -8,21 +8,21 @@
         let viewHeight = 480
         let viewWidth = 640
         let currentColorIndex=0
-        let palletWidth = 18 //default
+        let palletWidth = 20 //default
         let palletHeight = 24
         let strokeMin = 1.5
         let strokeVal=1
 
         colorArray = [ //based off the 4-bit cga color palette, 1 bit per rgb channel, with extra intensity bit
             [0,0,0], // black
-            [0,0,127], //blue
-            [0,127,0], //green
-            [0,127,127], //cyan
-            [127,0,0], //red
-            [127,0,127], //magenta
-            [127,85.3,0], //yl/br
-            [127,127,127], //gray
-            [85.3,85.3,85.3], //light gray
+            [0,0,170.6], //blue
+            [0,170.6,0], //green
+            [0,170.6,170.6], //cyan
+            [170.6,0,0], //red
+            [170.6,0,170.6], //magenta
+            [170.6,85.3,0], //yl/br
+            [85.3,85.3,85.3], // gray
+            [170.6,170.6,170.6], // light gray
             [85.3,85.3,255], //light blue
             [85.3,255,85.3], //light green
             [85.3,255,255], //light cyan
@@ -49,13 +49,16 @@
 
             //fill in panel BG
             
-            fill(colorArray[8]);
+            fill(colorArray[0]);
             rect(0,0,viewWidth, palletHeight)
+
             
+            
+            // draw colorpicker
             let xIndexRaw = mouseX/palletWidth
             
             let xIndexCalc = Math.floor(xIndexRaw)
-
+            
             for(let i = 0; i<colorArray.length;i++ ){
                 fill(colorArray[i])
                 // square(i*palleteWidth,0,palleteWidth)
@@ -65,16 +68,20 @@
 
             
             fill(colorArray[currentColorIndex]);
-            
+            rect(viewWidth-(palletWidth*16)+2,2,palletWidth*16-2,palletHeight-4)
             
             //stroke preview
+            if(currentColorIndex>=10){ //for making the stroke contrast against the bg
+                fill(colorArray[0])
+            }
+            else{
+                fill(colorArray[15])
+            }
             for(let i= colorArray.length*palletWidth+(palletWidth); i<colorArray.length*palletWidth*2; i+=palletWidth*2){
                 circle(i+(palletWidth/2),palletHeight/2, ((i-colorArray.length*palletWidth)/(palletWidth/strokeMin)) )
             }
             
-            
-            // TODO: add color pallete preview
-
+            fill(colorArray[currentColorIndex]);
 
             // when mouse button is pressed, draw circle, or calculate new stroke/color
             strokeWeight(0.125)
@@ -111,7 +118,7 @@
 
 <body>
     <header>
-        <h1>DMessham</h1>
+        <h1>DMessham EGA Paint</h1>
     </header>
     <main>
         <section>
@@ -123,14 +130,16 @@
         <section>
             <h2>Instructions</h2>
             <ul>
-                <li>Drag to draw circles on the canvas.</li>
-                <li>Click and hold to draw filled circles.</li>
+                <li>Click & Drag to draw circles on the canvas.</li>
+                <li>The top bar contains options for color and stroke width.</li>
+                <li>The Canvas roughly aproximates the limits of IBM EGA running with a CGA compatable palette</li>
             </ul>
             <button onclick="exportPNG()">Export PNG</button>
         </section>
     </main>
     <footer>
-        <p>Created by Jesse Rolheiser</p>
+        <p>Daniel Messham, 2026</p>
+        <p>ship-of-theseus'd from a template by Jesse Rolheiser</p>
     </footer>
 </body>
 
