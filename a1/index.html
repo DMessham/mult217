@@ -1,0 +1,116 @@
+<html>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
+    <title>DMessham Circle</title>
+    <script>
+        // Your Processing.js code goes here
+        let viewHeight = 480
+        let viewWidth = 640
+        let currentColorIndex=0
+        let palletWidth = 16 //default
+        let palletHeight = 16
+
+        colorArray = [ //based off the 4-bit cga color palette, 1 bit per rgb channel, with extra intensity bit
+            [0,0,0], // black
+            [0,0,127], //blue
+            [0,127,0], //green
+            [0,127,127], //cyan
+            [127,0,0], //red
+            [127,0,127], //magenta
+            [127,85.3,0], //yl/br
+            [127,127,127], //gray
+            [85.3,85.3,85.3], //light gray
+            [85.3,85.3,255], //light blue
+            [85.3,255,85.3], //light green
+            [85.3,255,255], //light cyan
+            [255,85.3,85.3], //light red
+            [255,85.3,255], //light magenta
+            [255,255,85.3], //light yellow
+            [255,255,255], //white
+        ]
+
+        // Special function `setup()` called ONCE before rendering phase
+        function setup() {
+            // Create a new 400x400 canvas element to do our sketching in
+            let canvas = createCanvas(viewWidth, viewHeight);
+
+            palletWidth = viewWidth/(colorArray.length)
+            console.log("Calc colorpick item width", viewWidth/(colorArray.length)*2)
+            // palletWidth == viewWidth/16
+            // Optional, but without a 'parent' set, the canvas is added to the end of <main> by default
+            canvas.parent('sketch-container');
+        }
+
+        // Special function `draw()` called repeatedly during the rendering phase
+        function draw() {
+            // TODO: add color pallete preview
+            for(let i = 0; i<colorArray.length;i++ ){
+                fill(colorArray[i])
+                // square(i*palleteWidth,0,palleteWidth)
+                let xOffset = i*palletWidth
+                rect(xOffset,0,palletWidth,palletHeight)
+            }
+            
+            fill(colorArray[currentColorIndex]);
+            // TODO: add color picker
+
+
+            // when mouse button is pressed, draw circle
+            strokeWeight(0.125)
+            if (mouseIsPressed === true) {
+                if(mouseY > palletHeight){
+                    fill(colorArray[currentColorIndex]);
+                    circle(mouseX, mouseY, 16
+                    );
+                } else {
+                    let xIndexRaw = mouseX/palletWidth
+                    // console.log('pallet picker raw index', xIndexRaw)
+                    let xIndexCalc = Math.floor(xIndexRaw)
+                    
+                    console.log('pallet picker calcindex', xIndexCalc)
+                    if (xIndexCalc<colorArray.length){
+                        currentColorIndex = xIndexCalc
+                    }
+                }
+            } else {
+            }
+        }
+    </script>
+    <script>
+        function exportPNG() {
+            // Add timestamp to export name for uniqueness
+            let timestamp = new Date().getTime();
+
+            // Call special P5.js function to save canvas
+            saveCanvas('mySketch_' + timestamp, 'png');
+        }
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>DMessham</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Sketch Area</h2>
+
+            <div id="sketch-container"></div>
+        </section>
+
+        <section>
+            <h2>Instructions</h2>
+            <ul>
+                <li>Drag to draw circles on the canvas.</li>
+                <li>Click and hold to draw filled circles.</li>
+            </ul>
+            <button onclick="exportPNG()">Export PNG</button>
+        </section>
+    </main>
+    <footer>
+        <p>Created by Jesse Rolheiser</p>
+    </footer>
+</body>
+
+</html>

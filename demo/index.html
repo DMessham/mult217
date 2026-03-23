@@ -9,7 +9,7 @@
         // Special function `setup()` called ONCE before rendering phase
         function setup() {
             // Create a new 400x400 canvas element to do our sketching in
-            let canvas = createCanvas(400, 400);
+            let canvas = createCanvas(640, 480);
 
             // Optional, but without a 'parent' set, the canvas is added to the end of <main> by default
             canvas.parent('sketch-container');
@@ -26,7 +26,7 @@
             }
 
             // Draw circle at mouse position
-            circle(mouseX, mouseY, 64);
+            circle(mouseX, mouseY, 32);
         }
     </script>
     <script>
