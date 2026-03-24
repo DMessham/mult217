@@ -92,9 +92,10 @@
             fill(colorArray[currentColorIndex]);
             //stroke preview
             
-            for(let i= colorArray.length*palletWidth+(palletWidth); i<colorArray.length*palletWidth*2; i+=palletWidth){
-                let thiccness = (((i+1)/(colorArray.length*palletWidth))*palletHeight)-palletHeight
-                square(i+(palletWidth/2)-thiccness/2,palletHeight/2-thiccness/2,thiccness) 
+            for(let i= (colorArray.length)*palletWidth; i<colorArray.length*palletWidth*2; i+=palletWidth){
+                let simpleIndex= ((i+palletWidth)/palletWidth)-colorArray.length
+                let thiccness = Math.round(((i)/(colorArray.length*palletWidth))*palletHeight)-palletHeight+1
+                square(i+(palletWidth/2)-thiccness/2, ((palletHeight/2)-(simpleIndex)/2), simpleIndex) 
             }
             
 
@@ -121,7 +122,7 @@
                         // set stroke
                         let strokeXindex = xIndexCalcAlt
                         console.log('stroke picker calcindex', strokeXindex/palletHeight)
-                        strokeVal = strokeXindex
+                        strokeVal = Math.round(strokeXindex)+1
                     }
                 }
             }
