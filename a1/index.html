@@ -74,7 +74,6 @@
                 rect(xOffset+1,1,palletWidth-2,palletHeight-2)
             }
 
-            
             strokeWeight(0)
             
             //draw indicator
@@ -86,11 +85,19 @@
             }
             
             rect((palletWidth*16)+1,1,palletWidth*16-1,palletHeight-2)
+            
             circle((palletWidth*currentColorIndex)+palletWidth/2,palletHeight/2, palletWidth/3)
             
             stroke(colorArray[0])
-            fill(colorArray[currentColorIndex]);
             //stroke preview
+
+            //draw indicator
+            if(currentColorIndex>=2 && currentColorIndex !=7){ //for making the fill contrast against the bg
+                fill(colorArray[15])
+            }
+            else{
+                fill(colorArray[0])
+            }
             
             for(let i= (colorArray.length)*palletWidth; i<colorArray.length*palletWidth*2; i+=palletWidth){
                 let simpleIndex= ((i+palletWidth)/palletWidth)-colorArray.length
@@ -98,7 +105,8 @@
                 square(i+(palletWidth/2)-thiccness/2, ((palletHeight/2)-(simpleIndex)/2), simpleIndex) 
             }
             
-
+            
+            fill(colorArray[currentColorIndex]);
             // when mouse button is pressed, draw circle, or calculate new stroke/color
             if (mouseIsPressed === true) {
                 if(mouseY > palletHeight){
