@@ -22,7 +22,7 @@
             [0,170.6,170.6], //cyan
             [170.6,0,0], //red
             [170.6,0,170.6], //magenta
-            [170.6,85.3,0], //yl/br
+            [170.6,85.3,0], //dark yellow/brown (early monitors had this be a yellow (#aaaa00 instead of #aa5500), but starting with the ibm 5153 it became brown, and all newer cards running in backwards comapability modes kept it brown)
             [85.3,85.3,85.3], // gray
             [170.6,170.6,170.6], // light gray
             [85.3,85.3,255], //light blue
@@ -41,7 +41,6 @@
 
             // palletWidth = viewWidth/(colorArray.length)
             console.log("Calc colorpick item width", viewWidth/(colorArray.length))
-            // palletWidth == viewWidth/16
             // Optional, but without a 'parent' set, the canvas is added to the end of <main> by default
             canvas.parent('sketch-container');
             fill(colorArray[0]);
@@ -55,15 +54,6 @@
             
             fill(colorArray[0]);
             rect(0,0,viewWidth, palletHeight)
-            
-                // strokeWeight(1)
-                
-                // if(currentColorIndex>=7){ //for making the stroke contrast against the bg
-                //     stroke(colorArray[0])
-                // } else{
-                //     stroke(colorArray[15])
-                // }
-
             
             // draw colorpicker
             
@@ -98,6 +88,8 @@
             else{
                 fill(colorArray[0])
             }
+
+            // this was mostly a trial and error process to figure out how to draw an accurate brush size preview, so that it would line up exacly assuming you clicked on the middle of each preview 
             
             for(let i= (colorArray.length)*palletWidth; i<colorArray.length*palletWidth*2; i+=palletWidth){
                 let simpleIndex= ((i+palletWidth)/palletWidth)-colorArray.length
@@ -114,7 +106,7 @@
                     square(mouseX-(strokeVal/2), mouseY-(strokeVal/2), strokeVal);
                 } else {
 
-                            
+                    // for the control bar at the top
                     let xIndexRaw = mouseX/palletWidth
                     let xIndexRawAlt = mouseX/(palletHeight/2)
                     
