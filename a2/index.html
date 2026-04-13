@@ -2,47 +2,16 @@
 
 <head>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
-    <title>DMessham Circle</title>
-    <script>
-        // Your Processing.js code goes here
 
-        // Special function `setup()` called ONCE before rendering phase
-        function setup() {
-            // Create a new 400x400 canvas element to do our sketching in
-            let canvas = createCanvas(640, 480);
-
-            // Optional, but without a 'parent' set, the canvas is added to the end of <main> by default
-            canvas.parent('sketch-container');
-        }
-
-        // Special function `draw()` called repeatedly during the rendering phase
-        function draw() {
-            // when mouse button is pressed, circles turn black
-            strokeWeight(0.125)
-            if (mouseIsPressed === true) {
-                fill(28,150,28);
-            } else {
-                fill(18,38,18);
-            }
-
-            // Draw circle at mouse position
-            circle(mouseX, mouseY, 32);
-        }
+    <script src="sketch.js">
     </script>
-    <script>
-        function exportPNG() {
-            // Add timestamp to export name for uniqueness
-            let timestamp = new Date().getTime();
-
-            // Call special P5.js function to save canvas
-            saveCanvas('mySketch_' + timestamp, 'png');
-        }
-    </script>
+    <script src="fab.js"></script>
+    <title>mult217 A2</title>
 </head>
 
 <body>
     <header>
-        <h1>My First p5.js Sketch</h1>
+        <h1>p5.js Sketch</h1>
     </header>
     <main>
         <section>
@@ -51,17 +20,9 @@
             <div id="sketch-container"></div>
         </section>
 
-        <section>
-            <h2>Instructions</h2>
-            <ul>
-                <li>Drag to draw circles on the canvas.</li>
-                <li>Click and hold to draw filled circles.</li>
-            </ul>
-            <button onclick="exportPNG()">Export PNG</button>
-        </section>
     </main>
     <footer>
-        <p>Created by Jesse Rolheiser</p>
+        <p>Daniel Messham 2026</p>
     </footer>
 </body>
 
