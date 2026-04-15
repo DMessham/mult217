@@ -1,5 +1,15 @@
+// DMessham loderunner remake
+
+// 
 let game = {};
 let config = {};
+
+let levels = [
+    {
+
+    },
+
+]
 
 let IS_DEBUG = true;
 
@@ -59,6 +69,7 @@ function resetGameState() {
     game.lives = 3;
     game.timer = 0;
     game.scene = "play";
+    game.level = 1;
 
     game.player = {
         x: width / 2,
@@ -74,9 +85,11 @@ function resetGameState() {
     };
 
     // game.enemies = [];
-    // game.obstacles = [];
+    // game.platforms = [];
     // game.bullets = [];
     // game.particles = [];
+    
+    game.gold = [];
 }
 
 function updateGame() {
@@ -108,7 +121,7 @@ function drawGame() {
 
     // drawEnemies();
     // drawBullets();
-    // drawFood();
+    // drawGold();
 }
 
 function drawUI() {
@@ -116,10 +129,14 @@ function drawUI() {
     fill(255);
     textSize(20);
     text("Score: " + game.score , 20, 30);
-    text("Lives: " + game.lives, 20, 55);
-    text("X: " + game.player.x + ", Y: " + game.player.y, 120, 30);
+
+    text("Level : " + game.level, 140, 30);
+
+    text("Lives: " + game.lives, 240, 30);
+
+    text("X: " + game.player.x + ", Y: " + game.player.y, 380, 30);
     
-    text("vX: " + game.player.vx + ", vY: " + game.player.vy, 120, 55);
+    text("vX: " + game.player.vx + ", vY: " + game.player.vy, 20, 55);
 
     // Helpers from utilities.js
     drawKnobPanel();
@@ -129,6 +146,15 @@ function drawUI() {
 function drawBackground() {
     background(20);
 }
+
+function drawEnemies(){
+
+}
+
+function drawGold(){
+
+}
+
 
 function drawPlayer() {
     fill(255);
@@ -149,19 +175,7 @@ function updatePlayer() {
     }
     else{
         game.player.vx = 0
-        // snap the player to the nearest grid coord
-        // game.player.x = (map(game.player.x, 0, width-game.player.w, 0, (width-game.player.w)/game.player.w))*game.player.w
     }
-    // if (game.player.vy>game.player.friction){
-    //     game.player.vy -= game.player.friction
-    // }
-    // else if (game.player.vy<-game.player.friction){
-    //     game.player.vy += game.player.friction
-    // }
-    // else {
-    //     game.player.vy = 0
-    // }
-
     // gravity
     if(game.player.vy < game.player.friction*37){
         game.player.vy += game.player.friction
@@ -174,6 +188,9 @@ function updatePlayer() {
 
     // Keep player within bounds
     game.player.x = constrain(game.player.x, 0, width - game.player.w);
+    if (game.player.y < 2){
+        levelWon()
+    }
     game.player.y = constrain(game.player.y, 0, height - game.player.h);
 
 }
@@ -184,7 +201,10 @@ function keyPressed() {
     } else if (keyCode === RIGHT_ARROW) {
         game.player.vx = config.playerSpeed;
     } else if (keyCode === UP_ARROW) {
-        if(game.player.jumpTimer<1){
+        if(playerOnLadder()){
+            game.player.vy = -config.playerSpeed;
+        }
+        else if(game.player.jumpTimer<1){
             game.player.vy = -config.playerSpeed;
             game.player.jumpTimer = game.player.jumpTimerReset
         }
@@ -206,4 +226,22 @@ function mouseDragged() {
 
 function mouseReleased() {
     handleKnobReleased();
+}
+
+function levelWon(){
+    // todo: move to next level
+    game.level++
+    game.score += 1000
+    game.player.x = width / 2;
+    game.player.y = height - 60;
+}
+
+function playerOnLadder(){
+    // implement ladder detection
+    return false;
+}
+
+
+function gameOver(){
+    // todo: reset game state
 }
