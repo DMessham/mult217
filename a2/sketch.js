@@ -95,6 +95,18 @@ function resetGameState() {
             w: 20,
             h: 20,
             friction: config.playerSpeed/9,
+            state: 'buried' // alive, buried, dead
+
+        },{   
+            x: 110,
+            initX: 110,
+            y:300,
+            initY: 300,
+            vx: 0,
+            vy: 0,
+            w: 20,
+            h: 20,
+            friction: config.playerSpeed/9,
             state: 'alive' // alive, buried, dead
 
         },
@@ -162,6 +174,8 @@ function drawUI() {
     
     text("vX: " + game.player.vx + ", vY: " + game.player.vy, 20, 55);
 
+    text("delta: " + deltaTime + " \nphys factor" + deltaTime/16.66, 20, 75)
+
     // Helpers from utilities.js
     drawKnobPanel();
     drawFAB();
@@ -228,8 +242,10 @@ function updatePlayer() {
     game.player.x += game.player.vx;
     game.player.y += game.player.vy;
 
-    // decelerate player
+    if (keyIsDown(LEFT_ARROW)){game.player.vx = -config.playerSpeed;}
+    else if (keyIsDown(RIGHT_ARROW)){game.player.vx = config.playerSpeed;}
 
+    // decelerate player
     if (game.player.vx>game.player.friction){
         game.player.vx -= game.player.friction
     }
@@ -240,16 +256,10 @@ function updatePlayer() {
         game.player.vx = 0
     }
     // gravity
-    // if(game.player.vy < game.player.friction*37 && (!isPlayerOnLadder() && isOnPlatform) && (game.player.y <= height-game.player.h*2)){
-    //     game.player.vy += game.player.friction
-    // }
-
     gravityFall(game.player)
-    
     if (game.player.jumpTimer> 0){
         game.player.jumpTimer -= 1
     }
-
 
     // Keep player within bounds
     game.player.x = constrain(game.player.x, 0, width - game.player.w);
@@ -258,6 +268,11 @@ function updatePlayer() {
     }
     game.player.y = constrain(game.player.y, 0, height - game.player.h);
 
+    //detect contact with an enemy
+
+    // make a player falling fast enough on an enemy kill it
+
+    //todo: make a player that hits the ground fast enough w/o hitting an enemy or a ladder (or water?) die
 }
 
 function playerAttack(x,y,tx,ty){
@@ -269,22 +284,23 @@ function enemyAttack(x,y,tx,ty){
 }
 
 function gravityFall(target){
-    if(target.vy < target.friction*37 && (!isOnLadder(target) && !isOnPlatform(target)) && (target.y <= height-target.h*2)){
+    if(target.vy < target.friction*37 && (!isOnLadder(target) && !isOnPlatform(target)) && (target.y <= height-30)){
         target.vy += target.friction
     }
 }
 
 function keyPressed() {
-    if (keyCode === LEFT_ARROW) {
-        game.player.vx = -config.playerSpeed;
-    } else if (keyCode === RIGHT_ARROW) {
-        game.player.vx = config.playerSpeed;
-    } else if (keyCode === UP_ARROW) {
+    moveKeys()
+}
+// function 
+
+function moveKeys(){
+    if (keyCode === UP_ARROW) {
         if(isOnLadder(game.player)){
             game.player.vy = -config.playerSpeed;
         }
         else if(game.player.jumpTimer<1){
-            game.player.vy = -config.playerSpeed;
+            game.player.vy = -config.playerSpeed*1.25;
             game.player.jumpTimer = game.player.jumpTimerReset
         }
         // game.player.vy = -config.playerSpeed;
@@ -317,15 +333,37 @@ function levelWon(){
 
 
 function isOnLadder(target){
+    let bottom = target.y+target.h
     // implement ladder detection
     return false;
 }
 
 function isOnPlatform(target){
     // implement ladder detection
-    return false;
+    let bottom = target.y+target.h
+    let collisionCheck = false
+    
+    // check entire bottom side
+    // for(let i=0; i+1; i<=target.w){
+        // let p = i;
+
+    // }
+    
+    return collisionCheck
 }
 
+function wallcheck(target){
+    // implement ladder detection
+    let bottom = target.y+target.h
+    let collisionCheck = false
+    
+    // check entire side
+    for(let i=0; i+1; i<=target.h){
+        // let p = i;
+    }
+    
+    return collisionCheck
+}
 function gameOver(){
     // todo: reset game state
 }
