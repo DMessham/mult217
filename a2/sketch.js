@@ -6,6 +6,7 @@ let config = {};
 
 let physDelta = 1
 
+
 let levels = [
     {
         
@@ -51,7 +52,9 @@ function initGameState() {
         scene: "play",
         score: 0,
         lives: 0,
-        timer: 0
+        timer: 0,
+        timeLimit: 240,
+        level: 1,
     };
 
     game.player = {};
@@ -74,7 +77,11 @@ function resetGameState() {
     game.lives = 3;
     game.timer = 0;
     game.scene = "play";
-    game.level = 1;
+    game.timeLimit = 240,
+
+    game.timeLeft = game.timeLimit - game.timer
+
+    game.frameTrack = 0
 
     game.player = {
         x: width / 2,
@@ -153,6 +160,9 @@ function resetGameState() {
 }
 
 function updateGame() {
+    
+    game.frameTrack++;
+
     if (IS_DEBUG) {
         config.playerSpeed = Math.round(getKnobValue('speed'));
         game.player.jumpTimerReset = Math.round(getKnobValue('jumpDelay'));
@@ -161,11 +171,13 @@ function updateGame() {
     }
 
     if (game.scene !== "play") return;
+    game.timer+=physDelta/60
+
+    game.timeLeft = game.timeLimit - game.timer
 
     updatePlayer();
 
 
-    game.timer++;
 
     updateEnemies();
     // updateBullets();
@@ -196,9 +208,16 @@ function drawUI() {
 
     text("Lives: " + game.lives, 240, 30);
 
-    text("X: " + round(game.player.x,2), 360, 30);
-    
-    text("Y: " + round(game.player.y,2), 480, 30);
+    if(game.timeLimit - game.timer  > 240){
+        text("Time: " + round(game.timer,1), 330, 30);
+    } else {
+        
+        text("Time Left: " + round(game.timeLimit - game.timer,1), 330, 30);
+    }
+
+
+    text("X: " + round(game.player.x,2), 580, 30);
+    text("Y: " + round(game.player.y,2), 680, 30);
     
     text("vX: " + round(game.player.vx,2) + ", vY: " + round(game.player.vy,2), 20, 55);
 
@@ -272,6 +291,11 @@ function drawPlayer() {
 }
 
 function updatePlayer() {
+
+    if (game.timeLeft <=0){
+        gameOver("timeLimit")
+    }
+
     game.player.x += game.player.vx*physDelta;
     game.player.y += game.player.vy*physDelta;
 
@@ -303,6 +327,7 @@ function updatePlayer() {
 
     //detect contact with an enemy
 
+
     // make a player falling fast enough on an enemy kill it
 
     //todo: make a player that hits the ground fast enough w/o hitting an enemy or a ladder (or water?) die
@@ -313,7 +338,12 @@ function playerAttack(x,y,tx,ty){
 }
 
 function enemyAttack(x,y,tx,ty){
+    let playerHit=false
 
+    if(playerHit){
+        
+        gameOver("enemyAttack")
+    }
 }
 
 function gravityFall(target){
@@ -397,6 +427,12 @@ function wallcheck(target){
     
     return collisionCheck
 }
-function gameOver(){
+function gameOver(reason){
     // todo: reset game state
+    if (game.lives<=0){
+        game.scene = "gameOver";
+    } else {
+        game.lives -=1;
+
+    }
 }
