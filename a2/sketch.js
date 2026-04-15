@@ -99,6 +99,7 @@ function resetGameState() {
     game.enemies = [
         {   
             x: 10,
+            startX: 10,
             y:300,
             vx: 0,
             vy: 0,
@@ -323,33 +324,51 @@ function updateEnemies(){
         
         e.y = constrain(e.y, 0, height - e.h);
         e.x = constrain(e.x, 0, width - e.w);
-        switch(e.state){
-            case 'disabled':
-                // todo: add wakeup logic
-                gravityFall(e)
-                //check if the player is in wakeup range (half normal sight range)
-                if(abs(checkPlayerProx(e.x,e.y,'radius')*0.75)>=e.sightVal){
-                    // return
-                } else{
-                    e.state = 'alive'
-                    enemyChase(e, playerX-15, playerY)
-                }
-            case 'dead':
-                gravityFall(e)
-                return
-            case 'alive':
+        // switch(e.state){
+        //     case 'disabled':
+        //         // todo: add wakeup logic
+        //         gravityFall(e)
+        //         //check if the player is in wakeup range (half normal sight range)
+        //         if(abs(checkPlayerProx(e.x,e.y,'radius')*0.75)>=e.sightVal){
+        //             // return
+        //         } else{
+        //             e.state = 'alive'
+        //             enemyChase(e, playerX-15, playerY)
+        //         }
+        //     case 'dead':
+        //     case 'alive':
                 
-            // if(abs(checkPlayerProx(e.x,e.y,'radius')*1.4)>=e.sightVal){
-                enemyChase(e, playerX, playerY)
-                gravityFall(e)
-            // }
-            default:
-                gravityFall(e)
-        }
+        //     // if(abs(checkPlayerProx(e.x,e.y,'radius')*1.4)>=e.sightVal){
+        //         enemyChase(e, playerX, playerY)
+        //         gravityFall(e)
+        //     // }
+        //     default:
+        //         gravityFall(e)
+        // }
 
         //check if the enemy can see the player
         
-        
+        if(e.state = 'dead'){
+            gravityFall(e)
+            // return
+        }
+        if(e.state = 'alive'){
+             // if(abs(checkPlayerProx(e.x,e.y,'radius')*1.4)>=e.sightVal){
+                enemyChase(e, playerX, playerY)
+                gravityFall(e)
+            // }
+        }
+        if(e.state = 'disabled'){
+            // todo: add wakeup logic
+            gravityFall(e)
+            //check if the player is in wakeup range (half normal sight range)
+            if(abs(checkPlayerProx(e.x,e.y,'radius')*0.75)>=e.sightVal){
+                // return
+            } else{
+                e.state = 'alive'
+                enemyChase(e, playerX-15, playerY)
+            }
+        }
     }
 }
 
@@ -380,40 +399,51 @@ function enemyChase(e, playerX, playerY){
             //basically noclip, for when time runs out
             e.canSeePlayer = true
     }
+
+    if(e.sight = ""){
+
+    }
+    else if(e.sight = ""){
+
+    }
+    else if(e.sight = ""){
+
+    }
+
     if(e.canSeePlayer){
         console.log(`enemy located at ${e.x},${e.y} using ${e.sight} sight can see player`)
-        switch(e.sight){
-            case 'horizontal': 
-                //run towards the player at full tilt
-                if (e.x < playerX-30){
-                    e.vx+=e.speed
-                }else if (e.x > playerX){
-                    e.vx-=e.speed
-                }
-            case 'radius':
-                if (e.x < playerX+e.w){
-                    e.vx+=e.speed
-                }else if (e.x > playerX+e.w){
-                    e.vx-=e.speed
-                }
-            case 'always':
-                //basically noclip, for when time runs out
-                // if (e.x < playerX+e.w/2){
-                //     e.vx+=e.speed
-                // }else if (e.x > playerX-e.w/2){
-                //     e.vx-=e.speed
-                // }
-                // if (e.y < playerY+e.h/2){
-                //     e.vy+=e.speed
-                // }else if (e.x > playerY){
-                //     e.vy-=e.speed
-                // }
-                e.vx += (checkPlayerProx(e.x,e.y,'x'))*0.0075*e.speed
-                
-                e.vy += (checkPlayerProx(e.x,e.y,'y'))*0.0075*e.speed
-            default:
+        if(e.sight == 'horizontal'){
+            if (e.x < playerX-30){
+                e.vx+=e.speed
+            }else if (e.x > playerX){
+                e.vx-=e.speed
+            }
+        }
+        else if (e.sight == "radius"){
+            if (e.x < playerX+e.w){
+                e.vx+=e.speed
+            }else if (e.x > playerX+e.w){
+                e.vx-=e.speed
+            }
+        } else if (e.sight == "always"){
+             //basically noclip, for when time runs out
+            // if (e.x < playerX+e.w/2){
+            //     e.vx+=e.speed
+            // }else if (e.x > playerX-e.w/2){
+            //     e.vx-=e.speed
+            // }
+            // if (e.y < playerY+e.h/2){
+            //     e.vy+=e.speed
+            // }else if (e.x > playerY){
+            //     e.vy-=e.speed
+            // }
+            e.vx = (checkPlayerProx(e.x,e.y,'x'))*0.0075*e.speed
+            
+            e.vy = (checkPlayerProx(e.x,e.y,'y'))*0.0075*e.speed
         }
     }
+
+    
 }
 
 function checkPlayerProx(originX,originY,mode){
