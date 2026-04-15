@@ -107,7 +107,10 @@ function resetGameState() {
             w: 20,
             h: 20,
             friction: config.playerSpeed/9,
-            state: 'buried' // alive, buried, dead
+            state: 'disabled', // alive, disabled, dead
+            type:"cart",//cart:charges in the dir of player and dies when hitting walls, sword: chases the player slowly, orb: noclip, slow movement
+            sight: 'horizontal', // horizontal, radius, always, 
+            sightVal: 10, // horizontal: up+down from top & bottom, radius: duh, always:not used
 
         },{   
             x: 110,
@@ -119,7 +122,10 @@ function resetGameState() {
             w: 20,
             h: 20,
             friction: config.playerSpeed/9,
-            state: 'alive' // alive, buried, dead
+            state: 'alive', // alive, disabled/blinded, dead
+            type:"sword",
+            sight: 'radius', // horizontal, radius, always, 
+            sightVal: 60, // horizontal: up+down from top & bottom, radius: duh, always:not used
 
         },
     ];
