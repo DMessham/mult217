@@ -105,15 +105,17 @@ function resetGameState() {
             w: 40,
             h: 20,
             friction: config.playerSpeed/9,
-            speed: 4,
+            speed: 0.05,
             state: 'disabled', // alive, disabled, dead
             type:"cart",//cart:charges in the dir of player and dies when hitting walls, sword: chases the player slowly, orb: noclip, slow movement
             sight: 'horizontal', // horizontal, radius, always, 
             sightVal: 10, // horizontal: up+down from top & bottom, radius: duh, always:not used
+            wakeRange: 90,
             lastKnownPlayerPos:[null, null],
             canSeePlayer: false,
 
-        },{   
+        },
+        {   
             x: 110,
             y:300,
             vx: 0,
@@ -121,13 +123,17 @@ function resetGameState() {
             w: 20,
             h: 20,
             friction: config.playerSpeed/9,
-            speed: 1.5,
+            speed: 0.025,
             state: 'alive', // alive, disabled/blinded, dead
             type:"sword",
             sight: 'radius', // horizontal, radius, always, 
             sightVal: 60, // horizontal: up+down from top & bottom, radius: duh, always:not used
+            wakeRange: 90,
+            lastKnownPlayerPos:[null, null],
+            canSeePlayer: false,
 
-        },{   
+        },
+        {   
             x: 110,
             y:300,
             vx: 0,
@@ -137,9 +143,12 @@ function resetGameState() {
             friction: config.playerSpeed/9,
             speed: 1,
             state: 'alive', // alive, disabled/blinded, dead
-            type:"target",
+            type:"smileball",
             sight: 'always', // horizontal, radius, always, 
             sightVal: 600, // horizontal: up+down from top & bottom, radius: duh, always:not used
+            wakeRange: 90,
+            lastKnownPlayerPos:[null, null],
+            canSeePlayer: false,
 
         },
     ];
@@ -263,23 +272,40 @@ function drawPlatforms(){
 
 function drawEnemies(){
     for(i in game.enemies){
-        e = game.enemies[i]
+        let e = game.enemies[i]
         switch(e.state){
             case "buried":
+                fill(192,0,0)
+                // rect(e.x, e.y+1, e.w, e.h/2);
             case "disabled":
                 fill(128,0,0)
-                rect(e.x, e.y+1, e.w, e.h/2);
+                // rect(e.x, e.y+1, e.w, e.h/2);
             case "alive":
                 fill(255,0,0)
-                rect(e.x, e.y,e.w, e.h);
+                // rect(e.x, e.y,e.w, e.h);
             case "dead":
+                // return()
                 fill(64,0,0)
-                rect(e.x, e.y,e.w/3, e.h/3);
-                return
+                // rect(e.x, e.y,e.w/3, e.h/3);
             default:
                 fill("pink")
-                rect(e.x+10, e.y+10, 10, 10);
+                // rect(e.x+10, e.y+10, 10, 10);
         }
+        
+        rect(e.x, e.y, e.w, e.h);
+        switch(e.type){
+            //todo: draw images for enemy types
+            case 'car':
+            case 'cart':
+                
+            case 'always':
+
+            case 'sword':
+            default:
+
+        }
+        fill(192)
+        text(e.type + ": " + e.state , e.x, e.y);
 
     }
 }
@@ -288,7 +314,7 @@ function updateEnemies(){
     let playerX = game.player.x + game.player.vx*physDelta
     let playerY = game.player.y + game.player.vy*physDelta
     for(i in game.enemies){
-        e = game.enemies[i]
+        let e = game.enemies[i]
         e.x += e.vx;
         e.y += e.vy;
         
@@ -299,17 +325,23 @@ function updateEnemies(){
                 // todo: add wakeup logic
                 gravityFall(e)
                 //check if the player is in wakeup range (half normal sight range)
-                if(abs(checkPlayerProx(e.x,e.y,'radius')*0.5)>=e.sightVal){
-                    return
+                if(abs(checkPlayerProx(e.x,e.y,'radius')*0.75)>=e.sightVal){
+                    // return
                 } else{
                     e.state = 'alive'
-                    enemyChase(e, playerX, playerY)
+                    enemyChase(e, playerX-15, playerY)
                 }
             case 'dead':
                 gravityFall(e)
                 return
             case 'alive':
+                
+            // if(abs(checkPlayerProx(e.x,e.y,'radius')*1.4)>=e.sightVal){
                 enemyChase(e, playerX, playerY)
+                gravityFall(e)
+            // }
+            default:
+                gravityFall(e)
         }
 
         //check if the enemy can see the player
@@ -320,16 +352,17 @@ function updateEnemies(){
 
 function enemyChase(e, playerX, playerY){
     
-    e.canSeePlayer = false
+    // e.canSeePlayer = false
+    e.canSeePlayer = true
     switch(e.sight){
         case 'horizontal': 
             //check if the player is at a similar horizontal level
-            gravityFall(e)
             if(
                 (playerY>=e.y-e.sightVal) && (playerY<=e.y+e.h+e.sightVal)
             ){
                 e.canSeePlayer = true
-            }
+            } 
+            // else {e.canSeePlayer = false}
         case 'radius':
             //check if player is close
             gravityFall(e)
@@ -338,7 +371,8 @@ function enemyChase(e, playerX, playerY){
                 (playerX>=e.y-e.sightVal) && (playerX<=e.x+e.w+e.sightVal)
             ){
                 e.canSeePlayer = true
-            }
+            } 
+            // else {e.canSeePlayer = false}
         case 'always':
             //basically noclip, for when time runs out
             e.canSeePlayer = true
@@ -348,28 +382,28 @@ function enemyChase(e, playerX, playerY){
         switch(e.sight){
             case 'horizontal': 
                 //run towards the player at full tilt
-                if (e.x < playerX+3){
+                if (e.x < playerX-30){
                     e.vx+=e.speed
-                }else if (e.x > playerX+3){
+                }else if (e.x > playerX){
                     e.vx-=e.speed
                 }
             case 'radius':
-                if (e.x < playerX+e.w/2){
+                if (e.x < playerX+e.w){
                     e.vx+=e.speed
-                }else if (e.x > playerX+e.w/2){
+                }else if (e.x > playerX+e.w){
                     e.vx-=e.speed
                 }
             case 'always':
                 //basically noclip, for when time runs out
                 if (e.x < playerX+e.w/2){
-                    e.x+=e.speed
-                }else if (e.x > playerX+e.w/2){
-                    e.x-=e.speed
+                    e.vx+=e.speed
+                }else if (e.x > playerX-e.w/2){
+                    e.vx-=e.speed
                 }
                 if (e.y < playerY+e.h/2){
-                    e.y+=e.speed
-                }else if (e.x > playerY+e.h/2){
-                    e.y-=e.speed
+                    e.vy+=e.speed
+                }else if (e.x > playerY){
+                    e.vy-=e.speed
                 }
             default:
         }
