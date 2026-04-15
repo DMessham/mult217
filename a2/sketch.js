@@ -304,8 +304,11 @@ function drawEnemies(){
             default:
 
         }
-        fill(192)
-        text(e.type + ": " + e.state , e.x, e.y);
+        if(IS_DEBUG == true){
+            fill(192)
+            text(e.type + ": " + e.state , e.x, e.y);
+
+        }
 
     }
 }
@@ -395,16 +398,19 @@ function enemyChase(e, playerX, playerY){
                 }
             case 'always':
                 //basically noclip, for when time runs out
-                if (e.x < playerX+e.w/2){
-                    e.vx+=e.speed
-                }else if (e.x > playerX-e.w/2){
-                    e.vx-=e.speed
-                }
-                if (e.y < playerY+e.h/2){
-                    e.vy+=e.speed
-                }else if (e.x > playerY){
-                    e.vy-=e.speed
-                }
+                // if (e.x < playerX+e.w/2){
+                //     e.vx+=e.speed
+                // }else if (e.x > playerX-e.w/2){
+                //     e.vx-=e.speed
+                // }
+                // if (e.y < playerY+e.h/2){
+                //     e.vy+=e.speed
+                // }else if (e.x > playerY){
+                //     e.vy-=e.speed
+                // }
+                e.vx += (checkPlayerProx(e.x,e.y,'x'))*0.0075*e.speed
+                
+                e.vy += (checkPlayerProx(e.x,e.y,'y'))*0.0075*e.speed
             default:
         }
     }
