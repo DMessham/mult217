@@ -99,29 +99,29 @@ function resetGameState() {
     game.enemies = [
         {   
             x: 10,
-            initX: 10,
             y:300,
-            initY: 300,
             vx: 0,
             vy: 0,
-            w: 20,
+            w: 40,
             h: 20,
             friction: config.playerSpeed/9,
-            state: 'disabled', // alive, disabled, dead
+            speed: 4,
+            state: 'alive', // alive, disabled, dead
             type:"cart",//cart:charges in the dir of player and dies when hitting walls, sword: chases the player slowly, orb: noclip, slow movement
             sight: 'horizontal', // horizontal, radius, always, 
             sightVal: 10, // horizontal: up+down from top & bottom, radius: duh, always:not used
+            lastKnownPlayerPos:[null, null],
+            canSeePlayer: false,
 
         },{   
             x: 110,
-            initX: 110,
             y:300,
-            initY: 300,
             vx: 0,
             vy: 0,
             w: 20,
             h: 20,
             friction: config.playerSpeed/9,
+            speed: 1.5,
             state: 'alive', // alive, disabled/blinded, dead
             type:"sword",
             sight: 'radius', // horizontal, radius, always, 
@@ -248,17 +248,21 @@ function drawPlatforms(){
 }
 
 function drawEnemies(){
-    fill("red")
     for(i in game.enemies){
         e = game.enemies[i]
         switch(e.state){
             case "buried":
+            case "disabled":
+                fill("darkred")
                 rect(e.x, e.y+1, e.w, e.h/2);
             case "alive":
+                
+                fill("red")
                 rect(e.x, e.y,e.w, e.h);
             case "dead":
                 return
             default:
+                fill("pink")
                 rect(e.x+10, e.y+10, 10, 10);
         }
 
@@ -272,16 +276,71 @@ function updateEnemies(){
         e = game.enemies[i]
         e.x += e.vx;
         e.y += e.vy;
-        gravityFall(e)
         
         e.y = constrain(e.y, 0, height - e.h);
         e.x = constrain(e.x, 0, width - e.w);
-
-        if (e.x < playerX+3){
-            e.x+=0.75
-        }else if (e.x > playerX+3){
-            e.x-=0.75
+        switch(e.state){
+            case 'disabled':
+                // todo: add wakeup logic
+                gravityFall(e)
+                checkPlayerProx(e.x,e,y)
+                return
+            case 'dead':
+                gravityFall(e)
+                return
         }
+
+        //check if the enemy can see the player
+        switch(e.sight){
+            case 'horizontal': 
+                //
+                gravityFall(e)
+                if((playerY>=e.y-e.sightVal)&&(playerY<=e.y+e.h+e.sightVal)){
+                    e.canSeePlayer = true
+                    if (e.x < playerX+3){
+                        e.x+=e.speed
+                    }else if (e.x > playerX+3){
+                        e.x-=e.speed
+                    }
+                } else {
+                    e.canSeePlayer = false
+                }
+            case 'radius':
+                gravityFall(e)
+                if((playerY>=e.y-e.sightVal)&&(playerY<=e.y+e.h+e.sightVal) && (playerY>=e.y-e.sightVal)&&(playerY<=e.x+e.w+e.sightVal)){
+                    e.canSeePlayer = true
+                    if (e.x < playerX+3){
+                        e.x+=e.speed
+                    }else if (e.x > playerX+3){
+                        e.x-=e.speed
+                    }
+                }else{
+                    e.canSeePlayer = false
+
+                }
+            case 'always':
+                //basically noclip, for when time runs out
+                if (e.x < playerX+3){
+                    e.x+=e.speed
+                }else if (e.x > playerX+3){
+                    e.x-=e.speed
+                }
+            default:
+        }
+        
+    }
+}
+
+function checkPlayerProx(originX,originY,mode){
+    switch(mode){
+        case 'horizontal':
+            return(game.player.x-originX,game.player.y-originY)
+        case 'vertical':
+            return(game.player.y-originY)
+        default:
+            return(game.player.x-originX)
+
+
     }
 }
 
