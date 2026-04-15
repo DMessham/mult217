@@ -106,7 +106,7 @@ function resetGameState() {
             h: 20,
             friction: config.playerSpeed/9,
             speed: 4,
-            state: 'alive', // alive, disabled, dead
+            state: 'disabled', // alive, disabled, dead
             type:"cart",//cart:charges in the dir of player and dies when hitting walls, sword: chases the player slowly, orb: noclip, slow movement
             sight: 'horizontal', // horizontal, radius, always, 
             sightVal: 10, // horizontal: up+down from top & bottom, radius: duh, always:not used
@@ -283,62 +283,80 @@ function updateEnemies(){
             case 'disabled':
                 // todo: add wakeup logic
                 gravityFall(e)
-                checkPlayerProx(e.x,e,y)
-                return
+                //check if the player is in wakeup range
+                if(abs(checkPlayerProx(e.x,e.y,'radius'))>=e.sightVal){
+                    return
+                } else{
+                    e.state = 'alive'
+                    enemyChase(e, playerX, playerY)
+                }
             case 'dead':
                 gravityFall(e)
                 return
+            case 'alive':
+                enemyChase(e, playerX, playerY)
         }
 
         //check if the enemy can see the player
-        switch(e.sight){
-            case 'horizontal': 
-                //
-                gravityFall(e)
-                if((playerY>=e.y-e.sightVal)&&(playerY<=e.y+e.h+e.sightVal)){
-                    e.canSeePlayer = true
-                    if (e.x < playerX+3){
-                        e.x+=e.speed
-                    }else if (e.x > playerX+3){
-                        e.x-=e.speed
-                    }
-                } else {
-                    e.canSeePlayer = false
-                }
-            case 'radius':
-                gravityFall(e)
-                if((playerY>=e.y-e.sightVal)&&(playerY<=e.y+e.h+e.sightVal) && (playerY>=e.y-e.sightVal)&&(playerY<=e.x+e.w+e.sightVal)){
-                    e.canSeePlayer = true
-                    if (e.x < playerX+3){
-                        e.x+=e.speed
-                    }else if (e.x > playerX+3){
-                        e.x-=e.speed
-                    }
-                }else{
-                    e.canSeePlayer = false
+        
+        
+    }
+}
 
-                }
-            case 'always':
-                //basically noclip, for when time runs out
+function enemyChase(e, tx, ty){
+    switch(e.sight){
+        case 'horizontal': 
+            //run towards the player at full tilt
+            gravityFall(e)
+            if((playerY>=e.y-e.sightVal)&&(playerY<=e.y+e.h+e.sightVal)){
+                e.canSeePlayer = true
                 if (e.x < playerX+3){
                     e.x+=e.speed
                 }else if (e.x > playerX+3){
                     e.x-=e.speed
                 }
-            default:
-        }
-        
+            } else {
+                e.canSeePlayer = false
+            }
+        case 'radius':
+            gravityFall(e)
+            if((playerY>=e.y-e.sightVal)&&(playerY<=e.y+e.h+e.sightVal) && (playerY>=e.y-e.sightVal)&&(playerY<=e.x+e.w+e.sightVal)){
+                e.canSeePlayer = true
+                if (e.x < playerX+3){
+                    e.x+=e.speed
+                }else if (e.x > playerX+3){
+                    e.x-=e.speed
+                }
+            }else{
+                e.canSeePlayer = false
+
+            }
+        case 'always':
+            //basically noclip, for when time runs out
+            if (e.x < playerX+3){
+                e.x+=e.speed
+            }else if (e.x > playerX+3){
+                e.x-=e.speed
+            }
+        default:
     }
 }
 
 function checkPlayerProx(originX,originY,mode){
+    let hDist = game.player.x-originX
+    let vDist = game.player.y-originY
     switch(mode){
         case 'horizontal':
-            return(game.player.x-originX,game.player.y-originY)
+            return(game.player.x-originX)
         case 'vertical':
             return(game.player.y-originY)
         default:
-            return(game.player.x-originX)
+            //return whichever dist is smaller
+            if(abs(hDist)>abs(vDist)){
+                return(game.player.x-originX)
+            }else{
+                return(game.player.y-originY)
+            }
 
 
     }
