@@ -6,7 +6,7 @@ let config = {};
 
 let levels = [
     {
-
+        
     },
 
 ]
@@ -73,7 +73,7 @@ function resetGameState() {
 
     game.player = {
         x: width / 2,
-        y: height - 60,
+        y: height - 40,
         w: 30,
         h: 30,
         vx: 0,
@@ -84,10 +84,34 @@ function resetGameState() {
         jumpTimerReset: 30,
     };
 
-    // game.enemies = [];
-    // game.platforms = [];
+    game.enemies = [
+        {   
+            x: 10,
+            initX: 10,
+            y:300,
+            initY: 300,
+            vx: 0,
+            vy: 0,
+            w: 20,
+            h: 20,
+            friction: config.playerSpeed/9,
+            state: 'alive' // alive, buried, dead
+
+        },
+    ];
+    game.platforms = [
+
+    ];
     // game.bullets = [];
     // game.particles = [];
+    game.gold = [
+        {   
+            x: 1,
+            y:1,
+            collected: false
+        },
+
+    ]
     
     game.gold = [];
 }
@@ -107,7 +131,7 @@ function updateGame() {
 
     game.timer++;
 
-    // updateEnemies();
+    updateEnemies();
     // updateBullets();
 
     // handleCollisions();
@@ -119,7 +143,7 @@ function drawGame() {
     drawBackground();
     drawPlayer();
 
-    // drawEnemies();
+    drawEnemies();
     // drawBullets();
     // drawGold();
 }
@@ -147,11 +171,50 @@ function drawBackground() {
     background(20);
 }
 
-function drawEnemies(){
+function drawPlatforms(){
 
 }
 
+function drawEnemies(){
+    fill("red")
+    for(i in game.enemies){
+        e = game.enemies[i]
+        switch(e.state){
+            case "buried":
+                rect(e.x, e.y+1, e.w, e.h/2);
+            case "alive":
+                rect(e.x, e.y,e.w, e.h);
+            case "dead":
+                return
+            default:
+                rect(e.x+10, e.y+10, 10, 10);
+        }
+
+    }
+}
+
+function updateEnemies(){
+    let playerX = game.player.x + game.player.vx
+    let playerY = game.player.y + game.player.vy
+    for(i in game.enemies){
+        e = game.enemies[i]
+        e.x += e.vx;
+        e.y += e.vy;
+        gravityFall(e)
+        
+        e.y = constrain(e.y, 0, height - e.h);
+        e.x = constrain(e.x, 0, width - e.w);
+
+        if (e.x < playerX+3){
+            e.x+=0.75
+        }else if (e.x > playerX+3){
+            e.x-=0.75
+        }
+    }
+}
+
 function drawGold(){
+    fill("gold")
 
 }
 
@@ -177,9 +240,11 @@ function updatePlayer() {
         game.player.vx = 0
     }
     // gravity
-    if(game.player.vy < game.player.friction*37){
-        game.player.vy += game.player.friction
-    }
+    // if(game.player.vy < game.player.friction*37 && (!isPlayerOnLadder() && isOnPlatform) && (game.player.y <= height-game.player.h*2)){
+    //     game.player.vy += game.player.friction
+    // }
+
+    gravityFall(game.player)
     
     if (game.player.jumpTimer> 0){
         game.player.jumpTimer -= 1
@@ -195,13 +260,27 @@ function updatePlayer() {
 
 }
 
+function playerAttack(x,y,tx,ty){
+
+}
+
+function enemyAttack(x,y,tx,ty){
+
+}
+
+function gravityFall(target){
+    if(target.vy < target.friction*37 && (!isOnLadder(target) && !isOnPlatform(target)) && (target.y <= height-target.h*2)){
+        target.vy += target.friction
+    }
+}
+
 function keyPressed() {
     if (keyCode === LEFT_ARROW) {
         game.player.vx = -config.playerSpeed;
     } else if (keyCode === RIGHT_ARROW) {
         game.player.vx = config.playerSpeed;
     } else if (keyCode === UP_ARROW) {
-        if(playerOnLadder()){
+        if(isOnLadder(game.player)){
             game.player.vy = -config.playerSpeed;
         }
         else if(game.player.jumpTimer<1){
@@ -236,11 +315,16 @@ function levelWon(){
     game.player.y = height - 60;
 }
 
-function playerOnLadder(){
+
+function isOnLadder(target){
     // implement ladder detection
     return false;
 }
 
+function isOnPlatform(target){
+    // implement ladder detection
+    return false;
+}
 
 function gameOver(){
     // todo: reset game state
