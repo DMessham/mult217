@@ -4,6 +4,8 @@
 let game = {};
 let config = {};
 
+let physDelta = 1
+
 let levels = [
     {
         
@@ -21,6 +23,9 @@ function setup() {
 }
 
 function draw() {
+    // framerate adaptive physics, less than 1 means too fast > 1 means too slow
+    // physDelta = constrain((deltaTime-1.66667)/15, 0, 2)
+    physDelta = deltaTime*(frameRate()/1000)
     updateGame();
     drawGame();
     drawUI();
@@ -79,7 +84,7 @@ function resetGameState() {
         vx: 0,
         vy: 0,
         hp: 100,
-        friction: config.playerSpeed/7,
+        friction: config.playerSpeed/6,
         jumpTimer: 0,
         jumpTimerReset: 30,
     };
@@ -112,7 +117,26 @@ function resetGameState() {
         },
     ];
     game.platforms = [
-
+        // todo: add platforms
+        {
+            x:0,
+            y:497,
+            w:width,
+            h:5,
+            color:"gray"
+        },{
+            x:50,
+            y:450,
+            w:600,
+            h:5,
+            color:"gray"
+        },{
+            x:250,
+            y:390,
+            w:500,
+            h:5,
+            color:"gray"
+        },
     ];
     // game.bullets = [];
     // game.particles = [];
@@ -153,11 +177,13 @@ function updateGame() {
 
 function drawGame() {
     drawBackground();
+    drawPlatforms();
+    
+    drawGold();
     drawPlayer();
 
     drawEnemies();
     // drawBullets();
-    // drawGold();
 }
 
 function drawUI() {
@@ -170,11 +196,13 @@ function drawUI() {
 
     text("Lives: " + game.lives, 240, 30);
 
-    text("X: " + game.player.x + ", Y: " + game.player.y, 380, 30);
+    text("X: " + round(game.player.x,2), 360, 30);
     
-    text("vX: " + game.player.vx + ", vY: " + game.player.vy, 20, 55);
+    text("Y: " + round(game.player.y,2), 480, 30);
+    
+    text("vX: " + round(game.player.vx,2) + ", vY: " + round(game.player.vy,2), 20, 55);
 
-    text("delta: " + deltaTime + " \nphys factor" + deltaTime/16.66, 20, 75)
+    text("fps: "+ getTargetFrameRate() + " phys:" + round(physDelta,3)+" delta: " + round(deltaTime,4), 20, 75)
 
     // Helpers from utilities.js
     drawKnobPanel();
@@ -186,7 +214,12 @@ function drawBackground() {
 }
 
 function drawPlatforms(){
-
+    
+    for(i in game.platforms){
+        e =  game.platforms[i]
+        fill(e.color)
+        rect(e.x, e.y, e.w, e.h);
+    }
 }
 
 function drawEnemies(){
@@ -208,8 +241,8 @@ function drawEnemies(){
 }
 
 function updateEnemies(){
-    let playerX = game.player.x + game.player.vx
-    let playerY = game.player.y + game.player.vy
+    let playerX = game.player.x + game.player.vx*physDelta
+    let playerY = game.player.y + game.player.vy*physDelta
     for(i in game.enemies){
         e = game.enemies[i]
         e.x += e.vx;
@@ -239,18 +272,18 @@ function drawPlayer() {
 }
 
 function updatePlayer() {
-    game.player.x += game.player.vx;
-    game.player.y += game.player.vy;
+    game.player.x += game.player.vx*physDelta;
+    game.player.y += game.player.vy*physDelta;
 
     if (keyIsDown(LEFT_ARROW)){game.player.vx = -config.playerSpeed;}
     else if (keyIsDown(RIGHT_ARROW)){game.player.vx = config.playerSpeed;}
 
     // decelerate player
     if (game.player.vx>game.player.friction){
-        game.player.vx -= game.player.friction
+        game.player.vx -= game.player.friction*physDelta
     }
     else if (game.player.vx<-game.player.friction){
-        game.player.vx += game.player.friction
+        game.player.vx += game.player.friction*physDelta
     }
     else{
         game.player.vx = 0
@@ -285,7 +318,7 @@ function enemyAttack(x,y,tx,ty){
 
 function gravityFall(target){
     if(target.vy < target.friction*37 && (!isOnLadder(target) && !isOnPlatform(target)) && (target.y <= height-30)){
-        target.vy += target.friction
+        target.vy += target.friction*physDelta
     }
 }
 
@@ -297,15 +330,15 @@ function keyPressed() {
 function moveKeys(){
     if (keyCode === UP_ARROW) {
         if(isOnLadder(game.player)){
-            game.player.vy = -config.playerSpeed;
+            game.player.vy = -config.playerSpeed*physDelta;
         }
         else if(game.player.jumpTimer<1){
-            game.player.vy = -config.playerSpeed*1.25;
+            game.player.vy = -config.playerSpeed*1.5*physDelta;
             game.player.jumpTimer = game.player.jumpTimerReset
         }
         // game.player.vy = -config.playerSpeed;
     } else if (keyCode === DOWN_ARROW) {
-        game.player.vy = config.playerSpeed;
+        game.player.vy = config.playerSpeed*physDelta;
     }
 }
 
