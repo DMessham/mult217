@@ -348,17 +348,17 @@ function updateEnemies(){
 
         //check if the enemy can see the player
         
-        if(e.state = 'dead'){
+        if(e.state == 'dead'){
             gravityFall(e)
-            // return
+            return
         }
-        if(e.state = 'alive'){
+        else if(e.state == 'alive'){
              // if(abs(checkPlayerProx(e.x,e.y,'radius')*1.4)>=e.sightVal){
                 enemyChase(e, playerX, playerY)
                 gravityFall(e)
             // }
         }
-        if(e.state = 'disabled'){
+        else if(e.state == 'disabled'){
             // todo: add wakeup logic
             gravityFall(e)
             //check if the player is in wakeup range (half normal sight range)
@@ -375,9 +375,19 @@ function updateEnemies(){
 function enemyChase(e, playerX, playerY){
     
     // e.canSeePlayer = false
-    e.canSeePlayer = true
-    switch(e.sight){
-        case 'horizontal': 
+    // e.canSeePlayer = true
+
+    if(e.sight == "radius"){
+        //check if the player is at a similar horizontal level
+        if(
+            (playerY>=e.y-e.sightVal) && (playerY<=e.y+e.h+e.sightVal)
+        ){
+            e.canSeePlayer = true
+        } 
+        // else {e.canSeePlayer = false}
+
+    }
+    else if(e.sight == "horizontal"){
             //check if the player is at a similar horizontal level
             if(
                 (playerY>=e.y-e.sightVal) && (playerY<=e.y+e.h+e.sightVal)
@@ -385,28 +395,11 @@ function enemyChase(e, playerX, playerY){
                 e.canSeePlayer = true
             } 
             // else {e.canSeePlayer = false}
-        case 'radius':
-            //check if player is close
-            gravityFall(e)
-            if(
-                (playerY>=e.y-e.sightVal) && (playerY<=e.y+e.h+e.sightVal) && 
-                (playerX>=e.y-e.sightVal) && (playerX<=e.x+e.w+e.sightVal)
-            ){
-                e.canSeePlayer = true
-            } 
-            // else {e.canSeePlayer = false}
-        case 'always':
-            //basically noclip, for when time runs out
-            e.canSeePlayer = true
-    }
-
-    if(e.sight = ""){
 
     }
-    else if(e.sight = ""){
-
-    }
-    else if(e.sight = ""){
+    else if(e.sight == "always"){
+        //basically noclip, for when time runs out
+        e.canSeePlayer = true
 
     }
 
