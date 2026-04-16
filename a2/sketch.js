@@ -426,7 +426,10 @@ function enemyChase(e, playerX, playerY){
         }
     }
 
-    
+    // if the playe is hit
+    if(rectsOverlap(target, game.player))(
+        gameOver("enemyAttack")
+    )
 }
 
 function checkPlayerProx(originX,originY,mode){
@@ -542,27 +545,18 @@ function gravityFall(target){
 }
 
 function keyPressed() {
-    moveKeys()
-
-    
-}
-// function 
-
-function moveKeys(){
     if (keyCode === UP_ARROW) {
-        if(isOnLadder(game.player)){
-            game.player.vy = -config.playerSpeed*physDelta;
-        }
-        else if(game.player.jumpTimer<1){
+        if(game.player.jumpTimer<1||isOnLadder(game.player)||isOnPlatform(game.player)){
             game.player.vy = -config.playerSpeed*1.5*physDelta;
             game.player.jumpTimer = game.player.jumpTimerReset
         }
         // game.player.vy = -config.playerSpeed;
     } else if (keyCode === DOWN_ARROW) {
-        game.player.vy = config.playerSpeed*physDelta;
+        game.player.vy += config.playerSpeed*physDelta/3;
     }
-}
 
+    
+}
 
 function mousePressed() {
     if (handleFABPressed()) return;
@@ -590,6 +584,8 @@ function isOnLadder(target){
     let bottom = target.y+target.h
     // implement ladder detection
     return false;
+    
+    // return rectsOverlap(target, game.ladders[i])
 }
 
 function isOnPlatform(target){
@@ -606,24 +602,7 @@ function isOnPlatform(target){
             //too high to be worth bothering
             return false
         }
-        // check for horizontal overlap
-        if (plat.x >= target.x && plat.x <= target.x+target.w && target.vy>0){
-            //there is an horizontal overlap
-            if(targetBelowVel>plat.y&&targetBelowVel<plat.y+plat.h){
-                // check if the velocity compensated position is inside the platform
-                target.y -= 1
-                return true
-            } else if(targetBelow>plat.y&&targetBelow<plat.y+plat.h){
-                // check if the regular position is inside the platform
-                target.y = plat.y-target.h
-                return true
-            } else if(targetBelow == plat.y || targetBelowVel == plat.y ){
-                // if the target is alligned perfectly
-                if(target.vy>0){target.vy-=target.vy}
-                return true
-            }
-        }
-        return false
+        return rectsOverlap(target, game.platforms[i])
     }
     
 }
