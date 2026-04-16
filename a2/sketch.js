@@ -49,7 +49,7 @@ function preload(){
 function draw() {
     // framerate adaptive physics, less than 1 means too fast > 1 means too slow
     // physDelta = constrain((deltaTime-1.66667)/15, 0, 2)
-    physDelta = constrain(abs(1.5-(deltaTime/getTargetFrameRate())),0,1.5)
+    physDelta = constrain((getTargetFrameRate()*deltaTime/1000),0,3)
     updateGame();
     drawGame();
     drawUI();
@@ -280,7 +280,7 @@ function drawUI() {
     
     text("vX: " + round(game.player.vx,2) + ", vY: " + round(game.player.vy,2), 20, 55);
 
-    text("fps: "+ getTargetFrameRate() + " phys:" + round(physDelta, 4)+" delta: " + round(deltaTime,4), 20, 75)
+    text("fps: "+ round(getTargetFrameRate()/(getTargetFrameRate()*deltaTime/1000),1)+"/"+ getTargetFrameRate() + " phys:" + round(physDelta, 4)+" delta: " + round(deltaTime,4), 20, 75)
 
     // Helpers from utilities.js
     drawKnobPanel();
@@ -304,26 +304,28 @@ function drawPlatforms(){
 function drawEnemies(){
     for(i in game.enemies){
         let e = game.enemies[i]
-        switch(e.state){
-            case "buried":
-                fill(192,0,0)
-                // rect(e.x, e.y+1, e.w, e.h/2);
-            case "disabled":
-                fill(128,0,0)
-                // rect(e.x, e.y+1, e.w, e.h/2);
-            case "alive":
-                fill(255,0,0)
-                // rect(e.x, e.y,e.w, e.h);
-            case "dead":
-                // return()
-                fill(64,0,0)
-                // rect(e.x, e.y,e.w/3, e.h/3);
-            default:
-                fill("pink")
+        if(e.state == "buried"){
+            fill(192,0,0)
+            rect(e.x, e.y+1, e.w, e.h/2);
+
+        }else if(e.state == "disabled"){
+            fill(128,0,0)
+            rect(e.x, e.y+1, e.w, e.h/1.5);
+
+        }else if(e.state == "alive"){
+            fill(255,0,0)
+            // rect(e.x, e.y,e.w, e.h);
+
+        }else if(e.state == "dead"){
+            fill(64,0,0)
+            rect(e.x, e.y,e.w, e.h);
+
+        }else {
+            
+                // fill("pink")
                 // rect(e.x+10, e.y+10, 10, 10);
-        }
-        
-        rect(e.x, e.y, e.w, e.h);
+        }        
+        // rect(e.x, e.y, e.w, e.h);
 
         if(e.type == "cart"){
             image(loadImage("enemy.png"), e.x, e.y, e.w, e.h)
