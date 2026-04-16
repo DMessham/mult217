@@ -498,6 +498,16 @@ function updatePlayer() {
     }
     game.player.y = constrain(game.player.y, 0, height - game.player.h);
 
+    
+    if (isOnPlatform(game.player)){
+        let targetBelow = game.player.y+game.player.h
+        // let game.playerBelowVel = game.playerBelow-game.player.vy
+        for (let i = 0; i< game.platforms.length; i++){
+            constrain(game.player.y, 0, game.platforms[i].y-game.player.h)
+        }
+
+    }
+
     //detect contact with an enemy
 
 
@@ -524,9 +534,10 @@ function enemyAttack(x,y,tx,ty){
 function gravityFall(target){
 
     // apply gravity effects
-    if(target.vy < target.friction*37 && (!isOnLadder(target) && !isOnPlatform(target)) && (target.y <= height-30)){
+    if(target.vy < target.friction*37 && !isOnLadder(target) && !isOnPlatform(target) && (target.y <= height-30)){
         target.vy += target.friction*physDelta
     }
+
 
 }
 
@@ -582,39 +593,37 @@ function isOnLadder(target){
 }
 
 function isOnPlatform(target){
-    // implement ladder detection
-    let collisionCheck = false
-    
+    // platform detection    
     let targetBelow = target.y+target.h
     let targetBelowVel = targetBelow-target.vy
 
-    for (i in game.platforms){
+    for (let i = 0; i< game.platforms.length; i++){
         let plat = game.platforms[i]
+        if (target.y>plat.y+plat.h){
+            //if below platoform
+            return false
+        }else if (targetBelowVel<plat.y-target.h/2){
+            //too high to be worth bothering
+            return false
+        }
         // check for horizontal overlap
-        if (plat.x >= target.x && plat.x <= target.x+target.w){
+        if (plat.x >= target.x && plat.x <= target.x+target.w && target.vy>0){
             //there is an horizontal overlap
-            if (target.y<plat.y+plat.h){
-                //if below platoform
-                
-                return false
-            }else if (targetBelowVel-(target.h*2)<plat.y){
-                //too high to be worth bothering
-                
-                return false
-            }
-            // check if the velocity compensated position is inside the platform
             if(targetBelowVel>plat.y&&targetBelowVel<plat.y+plat.h){
-                target.y=plat.y-1
-                target.vy=0;
+                // check if the velocity compensated position is inside the platform
+                target.y -= 1
                 return true
-            } else 
-            // check if the regular position is inside the platform
-            if(targetBelow>plat.y&&targetBelow<plat.y+plat.h){
-                target.y=plat.y-1
-                target.vy=0;
+            } else if(targetBelow>plat.y&&targetBelow<plat.y+plat.h){
+                // check if the regular position is inside the platform
+                target.y = plat.y-target.h
+                return true
+            } else if(targetBelow == plat.y || targetBelowVel == plat.y ){
+                // if the target is alligned perfectly
+                if(target.vy>0){target.vy-=target.vy}
                 return true
             }
         }
+        return false
     }
     
 }
@@ -640,3 +649,4 @@ function gameOver(reason){
 
     }
 }
+
