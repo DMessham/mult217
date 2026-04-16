@@ -141,7 +141,7 @@ function resetGameState() {
 
     game.enemies = [
         {   
-            x: 10,
+            x: 510,
             startX: 10,
             y:300,
             vx: 0,
@@ -150,7 +150,7 @@ function resetGameState() {
             h: 20,
             friction: config.playerSpeed/9,
             speed: 0.05,
-            state: 'disabled', // alive, disabled, dead
+            state: 'alive', // alive, disabled, dead
             type:"cart",//cart:charges in the dir of player and dies when hitting walls, sword: chases the player slowly, orb: noclip, slow movement
             sight: 'horizontal', // horizontal, radius, always, 
             sightVal: 10, // horizontal: up+down from top & bottom, radius: duh, always:not used
@@ -177,24 +177,24 @@ function resetGameState() {
             canSeePlayer: false,
 
         },
-        {   
-            x: 110,
-            y:300,
-            vx: 0,
-            vy: 0,
-            w: 20,
-            h: 20,
-            friction: config.playerSpeed/9,
-            speed: 1,
-            state: 'dead', // alive, disabled/blinded, dead
-            type:"smileball",
-            sight: 'always', // horizontal, radius, always, 
-            sightVal: 600, // horizontal: up+down from top & bottom, radius: duh, always:not used
-            wakeRange: 90,
-            lastKnownPlayerPos:[null, null],
-            canSeePlayer: false,
+        // {   
+        //     x: 110,
+        //     y:300,
+        //     vx: 0,
+        //     vy: 0,
+        //     w: 20,
+        //     h: 20,
+        //     friction: config.playerSpeed/9,
+        //     speed: 1,
+        //     state: 'dead', // alive, disabled/blinded, dead
+        //     type:"smileball",
+        //     sight: 'always', // horizontal, radius, always, 
+        //     sightVal: 600, // horizontal: up+down from top & bottom, radius: duh, always:not used
+        //     wakeRange: 90,
+        //     lastKnownPlayerPos:[null, null],
+        //     canSeePlayer: false,
 
-        },
+        // },
     ];
     game.platforms = [
         {
@@ -259,13 +259,12 @@ function updateGame() {
 
 function drawGame() {
     drawBackground();
-    drawPlatforms();
+    // drawPlatforms();
     
-    drawGold();
+    // drawGold();
     drawPlayer();
 
     drawEnemies();
-    // drawBullets();
 }
 
 function drawUI() {
@@ -274,16 +273,18 @@ function drawUI() {
     textSize(20);
     text("Score: " + game.score , 20, 30);
 
-    text("Level : " + game.level, 140, 30);
-
-    text("deaths: " + game.deaths, 240, 30);
-
+    // text("Level: " + game.level+"  Deaths: " + game.deaths, 140, 30);
+    let stateText = "Level " + game.level+"   Deaths: " + game.deaths;
     if(game.timeLimit - game.timer  > 240){
-        text("Time: " + round(game.timer,1), 330, 30);
+        // text("Time: " + round(game.timer,1), 330, 30);
+        stateText +="   Time: " + round(game.timer,1)
     } else {
         // musicFile = "09_-_Doom_-_3DO_-_Hiding_The_Secrets.ogg" //todo: make the music change when time runs low
-        text("Time Left: " + round(game.timeLimit - game.timer,1), 330, 30);
+        // text("Time Left: " + round(game.timeLimit - game.timer,1), 330, 30);
+        stateText +="   Time Left: " + round(game.timeLimit - game.timer,1)
     }
+
+    text(stateText, 140, 30);
 
 
     text("X: " + round(game.player.x,2), 580, 30);
@@ -513,11 +514,14 @@ function updatePlayer() {
         game.player.jumpTimer -= 1
     }
 
-    // Keep player within bounds
-    game.player.x = constrain(game.player.x, 0, width - game.player.w);
-    if (game.player.y < 2){
+    // level up
+
+    if (game.player.y < 2||game.player.x > width-game.player.w){
         levelWon()
     }
+    // Keep player within bounds
+    game.player.x = constrain(game.player.x, 0, width - game.player.w);
+    
     game.player.y = constrain(game.player.y, 0, height - game.player.h);
 
     
@@ -563,7 +567,8 @@ function gravityFall(target){
 function keyPressed() {
     if (keyCode === UP_ARROW) {
         if(game.player.jumpTimer<1||isOnLadder(game.player)||isOnPlatform(game.player)){
-            game.player.vy = -config.playerSpeed*1.5*physDelta;
+            // game.player.vy = -config.playerSpeed*1.5*physDelta;
+            game.player.vy = -config.playerSpeed*2*physDelta;
             game.player.jumpTimer = game.player.jumpTimerReset
         }
         // game.player.vy = -config.playerSpeed;
