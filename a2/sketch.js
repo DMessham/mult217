@@ -47,7 +47,7 @@ function preload(){
 function draw() {
     // framerate adaptive physics, less than 1 means too fast > 1 means too slow
     // physDelta = constrain((deltaTime-1.66667)/15, 0, 2)
-    physDelta = deltaTime*(frameRate()/1000)
+    physDelta = abs(2-(deltaTime/getTargetFrameRate()))
     updateGame();
     drawGame();
     drawUI();
@@ -277,7 +277,7 @@ function drawUI() {
     
     text("vX: " + round(game.player.vx,2) + ", vY: " + round(game.player.vy,2), 20, 55);
 
-    text("fps: "+ getTargetFrameRate() + " phys:" + round(physDelta,3)+" delta: " + round(deltaTime,4), 20, 75)
+    text("fps: "+ getTargetFrameRate() + " phys:" + round(physDelta, 4)+" delta: " + round(deltaTime,4), 20, 75)
 
     // Helpers from utilities.js
     drawKnobPanel();
@@ -321,7 +321,7 @@ function drawEnemies(){
         
         rect(e.x, e.y, e.w, e.h);
 
-        if(e.type == "car"||e.type=="cart"){
+        if(e.type == "cart"){
             image(loadImage("enemy.svg"), e.x, e.y, e.w, e.h)
         } else if(e.type=="smileball"){
             image(eSmileIMG, e.x, e.y, e.w, e.h)
@@ -407,7 +407,7 @@ function enemyChase(e, playerX, playerY){
     }
 
     if(e.canSeePlayer){
-        // console.log(`enemy located at ${e.x},${e.y} using ${e.sight} sight can see player`)
+        console.log(`enemy located at ${e.x},${e.y} using ${e.sight} sight can see player`)
         if(e.sight == 'horizontal'){
             if (e.x < playerX-30){
                 e.vx+=e.speed
