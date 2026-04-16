@@ -14,6 +14,11 @@ let levels = [
 
 ]
 
+let eCarIMG 
+let eSmileIMG
+let eSwordIMG
+let music
+
 let IS_DEBUG = true;
 
 function setup() {
@@ -21,6 +26,22 @@ function setup() {
 
     initUI();
     initGameState();
+}
+
+function preload(){
+    playerIMG = loadImage("player.svg");
+    
+    eCarIMG = loadImage("enemy.svg");
+    eSmileIMG = loadImage("watching.svg");
+    eSwordIMG = loadImage("sword.svg");
+    music=[
+        "11_-_Doom_-_3DO_-_Donna_To_The_Rescue.ogg",//normal
+        "03_-_Doom_-_3DO_-_Dark_Halls.ogg",
+        "08_-_Doom_-_3DO_-_Sign_Of_Evil.ogg",//little time
+        "09_-_Doom_-_3DO_-_Hiding_The_Secrets.ogg",
+        "12_-_Doom_-_3DO_-_Untitled.ogg"
+    ]
+
 }
 
 function draw() {
@@ -73,6 +94,14 @@ function initGameState() {
 }
 
 function resetGameState() {
+
+    
+    playerIMG = loadImage("player.svg");
+    
+    eCarIMG = loadImage("enemy.svg");
+    eSmileIMG = loadImage("watching.svg");
+    eSwordIMG = loadImage("sword.svg");
+
     game.score = 0;
     game.lives = 3;
     game.timer = 0;
@@ -154,7 +183,6 @@ function resetGameState() {
         },
     ];
     game.platforms = [
-        // todo: add platforms
         {
             x:0,
             y:497,
@@ -185,8 +213,6 @@ function resetGameState() {
         },
 
     ]
-    
-    game.gold = [];
 }
 
 function updateGame() {
@@ -294,15 +320,13 @@ function drawEnemies(){
         }
         
         rect(e.x, e.y, e.w, e.h);
-        switch(e.type){
-            //todo: draw images for enemy types
-            case 'car':
-            case 'cart':
-                
-            case 'always':
 
-            case 'sword':
-            default:
+        if(e.type == "car"||e.type=="cart"){
+            image(loadImage("enemy.svg"), e.x, e.y, e.w, e.h)
+        } else if(e.type=="smileball"){
+            image(eSmileIMG, e.x, e.y, e.w, e.h)
+        }else {
+            image(eSwordIMG, e.x, e.y, e.w, e.h)
 
         }
         if(IS_DEBUG == true){
@@ -383,7 +407,7 @@ function enemyChase(e, playerX, playerY){
     }
 
     if(e.canSeePlayer){
-        console.log(`enemy located at ${e.x},${e.y} using ${e.sight} sight can see player`)
+        // console.log(`enemy located at ${e.x},${e.y} using ${e.sight} sight can see player`)
         if(e.sight == 'horizontal'){
             if (e.x < playerX-30){
                 e.vx+=e.speed
