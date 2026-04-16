@@ -35,7 +35,7 @@ let musicFile = "09_-_Doom_-_3DO_-_Hiding_The_Secrets.ogg"
 let IS_DEBUG = true;
 
 function setup() {
-    createCanvas(800, 500);
+    createCanvas(900, 600);
 
     audioPlayer = createAudio(musicFile);
 
@@ -141,10 +141,10 @@ function resetGameState() {
             y: 300,
             vx: 0,
             vy: 0,
-            w: 40,
-            h: 20,
+            w: 80,
+            h: 35,
             friction: config.playerSpeed / 8,
-            speed: 0.05,
+            speed: 0.07,
             state: 'alive', // alive, disabled, dead
             type: "cart",//cart:charges in the dir of player and dies when hitting walls, sword: chases the player slowly, orb: noclip, slow movement
             sight: 'horizontal', // horizontal, radius, always, 
@@ -159,8 +159,8 @@ function resetGameState() {
             y: 300,
             vx: 0,
             vy: 0,
-            w: 20,
-            h: 20,
+            w: 30,
+            h: 30,
             friction: config.playerSpeed / 9,
             speed: 0.025,
             state: 'alive', // alive, disabled/blinded, dead
@@ -267,7 +267,7 @@ function drawUI() {
     text("X: " + round(game.player.x, 2), 580, 30);
     text("Y: " + round(game.player.y, 2), 680, 30);
     text("vX: " + round(game.player.vx, 2) + ", vY: " + round(game.player.vy, 2), 20, 55);
-    text("fps: " + round(getTargetFrameRate() / (getTargetFrameRate() * deltaTime / 1000), 1) + "/" + getTargetFrameRate() + " phys:" + round(physDelta, 4) + " delta: " + round(deltaTime, 4), 20, 75)
+    text("fps: " + round(getTargetFrameRate() / (getTargetFrameRate() * deltaTime / 1000), 1) + "/" + getTargetFrameRate() + " physSPD:" + round(physDelta, 4) + " delta: " + round(deltaTime, 4), 20, 75)
 
     // Helpers from utilities.js
     drawKnobPanel();
