@@ -17,13 +17,27 @@ let playerIMG
 let eCarIMG 
 let eSmileIMG
 let eSwordIMG
-let music
+let musicArray=[
+    "12_-_Doom_-_3DO_-_Untitled.ogg",//normal gameplay0
+    "03_-_Doom_-_3DO_-_Dark_Halls.ogg",//normal gameplay1
+    "08_-_Doom_-_3DO_-_Sign_Of_Evil.ogg",//normal gameplay2
+    "11_-_Doom_-_3DO_-_Donna_To_The_Rescue.ogg",//hardmode
+    "09_-_Doom_-_3DO_-_Hiding_The_Secrets.ogg",//VERY little time
+]
 let gameBG
+
+
+let audioPlayer;
+
+// let musicFile = "09_-_Doom_-_3DO_-_Hiding_The_Secrets.ogg"
+let musicFile = "03_-_Doom_-_3DO_-_Dark_Halls.ogg"
 
 let IS_DEBUG = true;
 
 function setup() {
     createCanvas(800, 500);
+
+    audioPlayer = createAudio(musicFile);
 
     initUI();
     initGameState();
@@ -36,13 +50,7 @@ function preload(){
     eCarIMG = loadImage("enemy.png");
     eSmileIMG = loadImage("watching.svg");
     eSwordIMG = loadImage("sword.svg");
-    musicArray=[
-        "11_-_Doom_-_3DO_-_Donna_To_The_Rescue.ogg",//normal gameplay
-        "03_-_Doom_-_3DO_-_Dark_Halls.ogg",
-        "08_-_Doom_-_3DO_-_Sign_Of_Evil.ogg",//little time
-        "09_-_Doom_-_3DO_-_Hiding_The_Secrets.ogg",
-        "12_-_Doom_-_3DO_-_Untitled.ogg"
-    ]
+    
 
 }
 
@@ -74,11 +82,13 @@ function initGameState() {
     game = {
         scene: "play",
         score: 0,
-        lives: 0,
+        deaths: 0,
         timer: 0,
         timeLimit: 240,
         level: 1,
     };
+    
+    audioPlayer.play()
 
     game.player = {};
     // game.enemies = [];
@@ -100,16 +110,17 @@ function resetGameState() {
     
     playerIMG = loadImage("player.svg");
     gameBG = loadImage("bg.jpeg")
+
+    
     
     eCarIMG = loadImage("enemy.png");
     eSmileIMG = loadImage("watching.svg");
     eSwordIMG = loadImage("sword.svg");
 
     game.score = 0;
-    game.lives = 3;
     game.timer = 0;
     game.scene = "play";
-    game.timeLimit = 240,
+    game.timeLimit = 290,
 
     game.timeLeft = game.timeLimit - game.timer
 
@@ -175,7 +186,7 @@ function resetGameState() {
             h: 20,
             friction: config.playerSpeed/9,
             speed: 1,
-            state: 'disabled', // alive, disabled/blinded, dead
+            state: 'dead', // alive, disabled/blinded, dead
             type:"smileball",
             sight: 'always', // horizontal, radius, always, 
             sightVal: 600, // horizontal: up+down from top & bottom, radius: duh, always:not used
@@ -265,12 +276,12 @@ function drawUI() {
 
     text("Level : " + game.level, 140, 30);
 
-    text("Lives: " + game.lives, 240, 30);
+    text("deaths: " + game.deaths, 240, 30);
 
     if(game.timeLimit - game.timer  > 240){
         text("Time: " + round(game.timer,1), 330, 30);
     } else {
-        
+        // musicFile = "09_-_Doom_-_3DO_-_Hiding_The_Secrets.ogg" //todo: make the music change when time runs low
         text("Time Left: " + round(game.timeLimit - game.timer,1), 330, 30);
     }
 
@@ -327,10 +338,12 @@ function drawEnemies(){
         }        
         // rect(e.x, e.y, e.w, e.h);
 
-        if(e.type == "cart"){
-            image(loadImage("enemy.png"), e.x, e.y, e.w, e.h)
+        if(e.type == "sword"){
+            image(eSwordIMG, e.x, e.y, e.w, e.h)
         } else if(e.type=="smileball"){
             image(eSmileIMG, e.x, e.y, e.w, e.h)
+        }else if(e.type=="cart"){
+            image(eCarIMG, e.x, e.y, e.w, e.h)
         }else {
             image(eSwordIMG, e.x, e.y, e.w, e.h)
 
@@ -462,14 +475,14 @@ function checkPlayerProx(originX,originY,mode){
 
 function drawGold(){
     fill("gold")
-
+    // TODO: ADD REWARDS
 }
 
 
 function drawPlayer() {
     fill(255);
     rect(game.player.x, game.player.y, game.player.w, game.player.h);
-    image(loadImage("player.svg"), game.player.x, game.player.y, game.player.w, game.player.h)
+    image(playerIMG, game.player.x-game.player.w/2, game.player.y, game.player.w*2, game.player.h*2)
 }
 
 function updatePlayer() {
@@ -577,7 +590,7 @@ function mouseReleased() {
 function levelWon(){
     // todo: move to next level
     game.level++
-    game.score += 1000
+    game.score += 100
     game.player.x = width / 2;
     game.player.y = height - 60;
 }
@@ -624,12 +637,14 @@ function wallcheck(target){
 }
 function gameOver(reason){
     // todo: reset game state
-    if (game.lives<=0){
-        game.scene = "gameOver";
-    } else {
-        game.lives -=1;
+    // if (game.deaths>=99){
+    //     resetGameState()
+    //     game.scene = "gameOver";
+    // } else {
+        game.deaths +=1;
+        resetGameState()
 
-    }
+    // }
 }
 
 /*
