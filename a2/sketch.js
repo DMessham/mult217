@@ -18,6 +18,7 @@ let eCarIMG
 let eSmileIMG
 let eSwordIMG
 let music
+let gameBG
 
 let IS_DEBUG = true;
 
@@ -30,12 +31,13 @@ function setup() {
 
 function preload(){
     playerIMG = loadImage("player.svg");
+    gameBG = loadImage("bg.jpeg")
     
-    // eCarIMG = loadImage("enemy.png");
+    eCarIMG = loadImage("enemy.png");
     eSmileIMG = loadImage("watching.svg");
     eSwordIMG = loadImage("sword.svg");
-    music=[
-        "11_-_Doom_-_3DO_-_Donna_To_The_Rescue.ogg",//normal
+    musicArray=[
+        "11_-_Doom_-_3DO_-_Donna_To_The_Rescue.ogg",//normal gameplay
         "03_-_Doom_-_3DO_-_Dark_Halls.ogg",
         "08_-_Doom_-_3DO_-_Sign_Of_Evil.ogg",//little time
         "09_-_Doom_-_3DO_-_Hiding_The_Secrets.ogg",
@@ -47,7 +49,7 @@ function preload(){
 function draw() {
     // framerate adaptive physics, less than 1 means too fast > 1 means too slow
     // physDelta = constrain((deltaTime-1.66667)/15, 0, 2)
-    physDelta = abs(2-(deltaTime/getTargetFrameRate()))
+    physDelta = constrain(abs(1.5-(deltaTime/getTargetFrameRate())),0,1.5)
     updateGame();
     drawGame();
     drawUI();
@@ -97,8 +99,9 @@ function resetGameState() {
 
     
     playerIMG = loadImage("player.svg");
+    gameBG = loadImage("bg.jpeg")
     
-    eCarIMG = loadImage("enemy.svg");
+    eCarIMG = loadImage("enemy.png");
     eSmileIMG = loadImage("watching.svg");
     eSwordIMG = loadImage("sword.svg");
 
@@ -286,6 +289,7 @@ function drawUI() {
 
 function drawBackground() {
     background(20);
+    image(gameBG, 0,0,width,height)
 }
 
 function drawPlatforms(){
@@ -504,9 +508,7 @@ function updatePlayer() {
     
     if (isOnPlatform(game.player)){
         let targetBelow = game.player.y+game.player.h
-        // for (let i = 0; i< game.platforms.length; i++){
-        //     constrain(game.player.y, 0, game.platforms[i].y-game.player.h)
-        // }
+
 
     }
 
