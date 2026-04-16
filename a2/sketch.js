@@ -13,7 +13,7 @@ let levels = [
     },
 
 ]
-
+let playerIMG
 let eCarIMG 
 let eSmileIMG
 let eSwordIMG
@@ -377,7 +377,7 @@ function updateEnemies(){
 
 function enemyChase(e, playerX, playerY){
     
-    // e.canSeePlayer = false
+    e.canSeePlayer = false
     // e.canSeePlayer = true
 
     if(e.sight == "radius"){
@@ -387,7 +387,6 @@ function enemyChase(e, playerX, playerY){
         ){
             e.canSeePlayer = true
         } 
-        // else {e.canSeePlayer = false}
 
     }
     else if(e.sight == "horizontal"){
@@ -397,7 +396,6 @@ function enemyChase(e, playerX, playerY){
             ){
                 e.canSeePlayer = true
             } 
-            // else {e.canSeePlayer = false}
 
     }
     else if(e.sight == "always"){
@@ -407,7 +405,7 @@ function enemyChase(e, playerX, playerY){
     }
 
     if(e.canSeePlayer){
-        console.log(`enemy located at ${e.x},${e.y} using ${e.sight} sight can see player`)
+        // console.log(`enemy located at ${e.x},${e.y} using ${e.sight} sight can see player`)
         if(e.sight == 'horizontal'){
             if (e.x < playerX-30){
                 e.vx+=e.speed
@@ -462,6 +460,7 @@ function drawGold(){
 function drawPlayer() {
     fill(255);
     rect(game.player.x, game.player.y, game.player.w, game.player.h);
+    image(loadImage("player.svg"), game.player.x, game.player.y, game.player.w, game.player.h)
 }
 
 function updatePlayer() {
@@ -502,7 +501,7 @@ function updatePlayer() {
     //detect contact with an enemy
 
 
-    // make a player falling fast enough on an enemy kill it
+    // maybe: make a player falling fast enough on an enemy kill it
 
     //todo: make a player that hits the ground fast enough w/o hitting an enemy or a ladder (or water?) die
 }
@@ -514,6 +513,8 @@ function playerAttack(x,y,tx,ty){
 function enemyAttack(x,y,tx,ty){
     let playerHit=false
 
+    // todo check if the player hasbeen hit
+
     if(playerHit){
         
         gameOver("enemyAttack")
@@ -521,13 +522,18 @@ function enemyAttack(x,y,tx,ty){
 }
 
 function gravityFall(target){
+
+    // apply gravity effects
     if(target.vy < target.friction*37 && (!isOnLadder(target) && !isOnPlatform(target)) && (target.y <= height-30)){
         target.vy += target.friction*physDelta
     }
+
 }
 
 function keyPressed() {
     moveKeys()
+
+    
 }
 // function 
 
@@ -577,16 +583,40 @@ function isOnLadder(target){
 
 function isOnPlatform(target){
     // implement ladder detection
-    let bottom = target.y+target.h
     let collisionCheck = false
     
-    // check entire bottom side
-    // for(let i=0; i+1; i<=target.w){
-        // let p = i;
+    let targetBelow = target.y+target.h
+    let targetBelowVel = targetBelow-target.vy
 
-    // }
+    for (i in game.platforms){
+        let plat = game.platforms[i]
+        // check for horizontal overlap
+        if (plat.x >= target.x && plat.x <= target.x+target.w){
+            //there is an horizontal overlap
+            if (target.y<plat.y+plat.h){
+                //if below platoform
+                
+                return false
+            }else if (targetBelowVel-(target.h*2)<plat.y){
+                //too high to be worth bothering
+                
+                return false
+            }
+            // check if the velocity compensated position is inside the platform
+            if(targetBelowVel>plat.y&&targetBelowVel<plat.y+plat.h){
+                target.y=plat.y-1
+                target.vy=0;
+                return true
+            } else 
+            // check if the regular position is inside the platform
+            if(targetBelow>plat.y&&targetBelow<plat.y+plat.h){
+                target.y=plat.y-1
+                target.vy=0;
+                return true
+            }
+        }
+    }
     
-    return collisionCheck
 }
 
 function wallcheck(target){
