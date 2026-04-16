@@ -1,18 +1,18 @@
 // DMessham loderunner remake
 
-// 
+// Had to ditch the platforming because i couldnt get collisions working
 let game = {};
 let config = {};
 
 let physDelta = 1
 
 
-let levels = [
-    {
-
-    },
-
-]
+// let levels = [ //TODO: add more level layouts
+//     {
+//            enemies,
+//            platforms,
+//     },
+// ]
 let playerIMG
 let eCarIMG
 let eSmileIMG
@@ -29,8 +29,8 @@ let gameBG
 
 let audioPlayer;
 
-// let musicFile = "09_-_Doom_-_3DO_-_Hiding_The_Secrets.ogg"
-let musicFile = "03_-_Doom_-_3DO_-_Dark_Halls.ogg"
+let musicFile = "09_-_Doom_-_3DO_-_Hiding_The_Secrets.ogg"
+// let musicFile = "03_-_Doom_-_3DO_-_Dark_Halls.ogg"
 
 let IS_DEBUG = true;
 
@@ -136,14 +136,14 @@ function resetGameState() {
 
     game.enemies = [
         {
-            x: 510,
+            x: 10,
             startX: 10,
             y: 300,
             vx: 0,
             vy: 0,
             w: 40,
             h: 20,
-            friction: config.playerSpeed / 9,
+            friction: config.playerSpeed / 8,
             speed: 0.05,
             state: 'alive', // alive, disabled, dead
             type: "cart",//cart:charges in the dir of player and dies when hitting walls, sword: chases the player slowly, orb: noclip, slow movement
@@ -155,7 +155,7 @@ function resetGameState() {
 
         },
         {
-            x: 110,
+            x: 610,
             y: 300,
             vx: 0,
             vy: 0,
