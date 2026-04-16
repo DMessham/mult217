@@ -31,7 +31,7 @@ function setup() {
 function preload(){
     playerIMG = loadImage("player.svg");
     
-    eCarIMG = loadImage("enemy.svg");
+    // eCarIMG = loadImage("enemy.png");
     eSmileIMG = loadImage("watching.svg");
     eSwordIMG = loadImage("sword.svg");
     music=[
@@ -140,7 +140,7 @@ function resetGameState() {
             type:"cart",//cart:charges in the dir of player and dies when hitting walls, sword: chases the player slowly, orb: noclip, slow movement
             sight: 'horizontal', // horizontal, radius, always, 
             sightVal: 10, // horizontal: up+down from top & bottom, radius: duh, always:not used
-            wakeRange: 90,
+            wakeRange: 490,
             lastKnownPlayerPos:[null, null],
             canSeePlayer: false,
 
@@ -172,7 +172,7 @@ function resetGameState() {
             h: 20,
             friction: config.playerSpeed/9,
             speed: 1,
-            state: 'alive', // alive, disabled/blinded, dead
+            state: 'disabled', // alive, disabled/blinded, dead
             type:"smileball",
             sight: 'always', // horizontal, radius, always, 
             sightVal: 600, // horizontal: up+down from top & bottom, radius: duh, always:not used
@@ -322,7 +322,7 @@ function drawEnemies(){
         rect(e.x, e.y, e.w, e.h);
 
         if(e.type == "cart"){
-            image(loadImage("enemy.svg"), e.x, e.y, e.w, e.h)
+            image(loadImage("enemy.png"), e.x, e.y, e.w, e.h)
         } else if(e.type=="smileball"){
             image(eSmileIMG, e.x, e.y, e.w, e.h)
         }else {
@@ -427,7 +427,7 @@ function enemyChase(e, playerX, playerY){
     }
 
     // if the playe is hit
-    if(rectsOverlap(target, game.player))(
+    if(rectsOverlap(e, game.player))(
         gameOver("enemyAttack")
     )
 }
@@ -504,10 +504,9 @@ function updatePlayer() {
     
     if (isOnPlatform(game.player)){
         let targetBelow = game.player.y+game.player.h
-        // let game.playerBelowVel = game.playerBelow-game.player.vy
-        for (let i = 0; i< game.platforms.length; i++){
-            constrain(game.player.y, 0, game.platforms[i].y-game.player.h)
-        }
+        // for (let i = 0; i< game.platforms.length; i++){
+        //     constrain(game.player.y, 0, game.platforms[i].y-game.player.h)
+        // }
 
     }
 
